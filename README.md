@@ -1,4 +1,4 @@
-# SudokuGame Project
+# SudokuGame
 
 ## Information about us
 This project was developed for the "Architetture Distribuite per il Cloud" course. <br>
