@@ -1,3 +1,8 @@
+package Sudoku;
+
+import Interface.SudokuGame;
+
+import Interface.MessageListener;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
@@ -8,8 +13,8 @@ import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.ObjectDataReply;
 
 import java.net.InetAddress;
-
 import java.util.logging.Logger;
+
 
 public class SudokuGameImpl implements SudokuGame {
 
@@ -48,10 +53,6 @@ public class SudokuGameImpl implements SudokuGame {
         });
     }
 
-    public void SayHallo(String name) {
-        System.out.println("Hello " + name);
-    }
-
     /*   public Integer[][] generateNewSudoku(String _game_name) {
         return new Integer[0][];
     }
@@ -67,4 +68,13 @@ public class SudokuGameImpl implements SudokuGame {
     public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
         return null;
     }*/
+
+    /* Metodo temporaneo: da rivedere */
+    public void leaveNetwork() {
+        _dht.peer().announceShutdown().start().awaitUninterruptibly();
+    }
+
+    public void SayHallo(String name) {
+        System.out.println("Hello " + name);
+    }
 }

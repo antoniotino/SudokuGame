@@ -1,8 +1,10 @@
+package Interface;
 public interface SudokuGame {
 
     /* Test non inerente al progetto*/
     void SayHallo(String name);
 
+    /* Default Feature */
 
     /**
      * Creates new games.
@@ -38,4 +40,10 @@ public interface SudokuGame {
      * @return the integer score of the placed number.
      */
  //   Integer placeNumber(String _game_name, int _i, int _j, int _number);
+
+    /* New Feature */
+    /**
+     * Allows a peer to leave the network
+     */
+    void leaveNetwork();
 }
