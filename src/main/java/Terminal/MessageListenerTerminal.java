@@ -1,5 +1,6 @@
 package Terminal;
 import Interface.MessageListener;
+
 import java.util.logging.Logger;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
@@ -17,7 +18,7 @@ public class MessageListenerTerminal implements MessageListener {
     public Object parseMessage(Object obj){
         TextIO textIO = TextIoFactory.getTextIO();
         TextTerminal terminal = textIO.getTextTerminal();
-        terminal.printf("\n"+peerID+"] (Direct Message Received) "+obj+"\n\n");
+        terminal.printf("\n["+peerID+"] (Direct Message Received) "+obj+"\n\n");
         LOGGER.info("["+peerID+"] (Direct Message Received) " + obj);
         return "success";
     }

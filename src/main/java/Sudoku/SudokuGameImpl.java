@@ -1,8 +1,8 @@
 package Sudoku;
 
 import Interface.SudokuGame;
-
 import Interface.MessageListener;
+
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
@@ -72,9 +72,5 @@ public class SudokuGameImpl implements SudokuGame {
     /* Metodo temporaneo: da rivedere */
     public void leaveNetwork() {
         _dht.peer().announceShutdown().start().awaitUninterruptibly();
-    }
-
-    public void SayHallo(String name) {
-        System.out.println("Hello " + name);
     }
 }

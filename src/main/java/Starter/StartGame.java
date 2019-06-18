@@ -3,6 +3,7 @@ package Starter;
 import Sudoku.SudokuGameImpl;
 import Terminal.MessageListenerTerminal;
 import Terminal.TerminalGrafic;
+
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -14,12 +15,12 @@ public class StartGame {
 
         int peerID = 0;
         final Logger LOGGER = Logger.getLogger(SudokuGameImpl.class.getName());
-        SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Choose the graphic quality: \t 1) Terminal \t 2) GUI \t: ");
         int choose = scanner.nextInt();
         if(choose == 1){
+            SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
             LOGGER.info("Open terminal");
             TerminalGrafic terminal = new TerminalGrafic(peer, peerID);
             terminal.startTerminal();

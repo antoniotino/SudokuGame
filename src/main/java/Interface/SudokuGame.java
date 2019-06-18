@@ -1,8 +1,6 @@
 package Interface;
-public interface SudokuGame {
 
-    /* Starter non inerente al progetto*/
-    void SayHallo(String name);
+public interface SudokuGame {
 
     /* Default Feature */
 
@@ -42,6 +40,7 @@ public interface SudokuGame {
  //   Integer placeNumber(String _game_name, int _i, int _j, int _number);
 
     /* New Feature */
+
     /**
      * Allows a peer to leave the network
      */
