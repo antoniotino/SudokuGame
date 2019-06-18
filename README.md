@@ -18,7 +18,7 @@ University of Salerno
 * Docker
 * Other technologies will be added soon...
 
-## Problem statement
+## Problem Statement
 Design and development of the Sudoku Game on a P2P network. <br>
 Each user can place a number of the sudoku game, if it is not already placed takes 1 point, if it is already placed and it is rights takes 0 point, in other case receive -1 point. The games is based on 9 x 9 matrix. All users that play to a game are automatically informed when a user increment its score, and when the game is finished. The system allows the users to generate (automatically) a new Sudoku challange identified by a name, join in a challenge using a nickname, get the integer matrix describing the Sudoku challenge, and place a solution number
 
@@ -42,7 +42,8 @@ Project under construction
 Project under construction
 
 ## Compile & Execute in local environment
-Project under construction
+* Use either Eclipse, Intellij or any other IDE you like
+* Other information will be added soon...
 
 ## Build in a Docker container
 Project under construction
