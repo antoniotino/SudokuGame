@@ -23,7 +23,7 @@ Design and develop a Sudoku challenge game on a P2P network. Each user can place
 ## Solution 
 Project under construction
 
-## Test case 
+## Starter case 
 Project under construction
 
 ## Compile & Execute in local

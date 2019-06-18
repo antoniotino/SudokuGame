@@ -1,7 +1,7 @@
 package Interface;
 public interface SudokuGame {
 
-    /* Test non inerente al progetto*/
+    /* Starter non inerente al progetto*/
     void SayHallo(String name);
 
     /* Default Feature */

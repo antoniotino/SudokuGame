@@ -1,4 +1,4 @@
-package Test;
+package Starter;
 
 import Sudoku.SudokuGameImpl;
 import Terminal.MessageListenerTerminal;
@@ -10,7 +10,8 @@ public class StartGame {
 
     public static void main(String[] args) throws Exception {
 
-        /* Non conosco la fattibilità di questa idea */
+        /* Commento temporaneo: verificare la fattibilità dell'idea */
+
         int peerID = 0;
         final Logger LOGGER = Logger.getLogger(SudokuGameImpl.class.getName());
         SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
