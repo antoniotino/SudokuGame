@@ -1,7 +1,7 @@
 # SudokuGame
 
 ## About us
-This project was developed for the "Architetture Distribuite per il Cloud" course <br>
+This project was developed for the "Architetture Distribuite per il Cloud" course. <br>
 University of Salerno
 
 #### Team 
