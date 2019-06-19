@@ -15,6 +15,7 @@ public class MessageListenerTerminal implements MessageListener {
         this.peerID = peerID;
     }
 
+    /* da rivedere */
     public Object parseMessage(Object obj){
         TextIO textIO = TextIoFactory.getTextIO();
         TextTerminal terminal = textIO.getTextTerminal();

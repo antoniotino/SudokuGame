@@ -26,7 +26,7 @@ public class TerminalGrafic {
             int option = textIO.newIntInputReader().withMaxVal(5).withMinVal(1).read("Option");
             switch (option){
                 case 1:
-                    peer.SayHallo("Antonio");
+                    System.out.println("OP1");
                     break;
                 case 2:
                     System.out.println("OP2");
@@ -52,10 +52,10 @@ public class TerminalGrafic {
     }
 
     private void printMenu(TextTerminal terminal) {
-        terminal.printf("\n1 - SAY HELLO\n");
-        terminal.printf("\n2 - OP1\n");
-        terminal.printf("\n3 - OP2\n");
-        terminal.printf("\n4 - OP3\n");
+        terminal.printf("\n1 - OP1\n");
+        terminal.printf("\n2 - OP2\n");
+        terminal.printf("\n3 - OP3\n");
+        terminal.printf("\n4 - OP4\n");
         terminal.printf("\n5 - EXIT\n");
     }
 }
