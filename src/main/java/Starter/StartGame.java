@@ -37,7 +37,7 @@ public class StartGame {
             SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
             TerminalGrafic terminalGrafic = new TerminalGrafic(peer, peerID, user);
             terminalGrafic.startTerminal();
-        }else if(choose == 2){
+        }else{
             terminal.abort();
             System.out.println("GUI");
         }
