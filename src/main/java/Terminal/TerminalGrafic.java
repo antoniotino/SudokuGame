@@ -19,14 +19,40 @@ public class TerminalGrafic {
     public void startTerminal() {
         TextIO textIO = TextIoFactory.getTextIO();
         TextTerminal terminal = textIO.getTextTerminal();
+        String nickname;
 
         terminal.printf("\nStaring peer id: %d\n", peerID);
         while (true) {
             printMenu(terminal);
-            int option = textIO.newIntInputReader().withMaxVal(5).withMinVal(1).read("Option");
-            switch (option){
+            int option = textIO.newIntInputReader().withMaxVal(5).withMinVal(1).read("\nOption");
+            switch (option) {
                 case 1:
-                    System.out.println("OP1");
+                    terminal.printf("Insert your nickname: ");
+                    nickname = textIO.newStringInputReader().read();
+
+                    terminal.printf("Insert the name's game: ");
+                    String _game_name = textIO.newStringInputReader().read();
+
+                    terminal.printf("\nChoose the sudoku's difficulty\n1) Easy \t 2) Medium \t 3)Hard \t: ");
+                    int choose = textIO.newIntInputReader().withMaxVal(3).withMinVal(1).read();
+
+                    String difficulty = "";
+                    switch (choose) {
+                        case 1:
+                            difficulty += "easy";
+                            break;
+                        case 2:
+                            difficulty += "medium";
+                            break;
+                        case 3:
+                            difficulty += "hard";
+                            break;
+                        default:
+                            terminal.printf("\n Error into choose!\n");
+                            break;
+                    }
+                    peer.choose_difficulty(difficulty);
+                    printSudoku(peer.generateNewSudoku(_game_name), terminal);
                     break;
                 case 2:
                     System.out.println("OP2");
@@ -40,22 +66,58 @@ public class TerminalGrafic {
                 case 5:
                     terminal.printf("\nAre you sure to leave the network?\n");
                     boolean exit = textIO.newBooleanInputReader().withDefaultValue(false).read("exit?");
-                    if(exit) {
+                    if (exit) {
                         peer.leaveNetwork();
                         System.exit(0);
                     }
                     break;
                 default:
+                    terminal.printf("\n Error into choose!\n");
                     break;
             }
         }
     }
 
     private void printMenu(TextTerminal terminal) {
-        terminal.printf("\n1 - OP1\n");
+        terminal.printf("\n1 - Create a new sudoku\n");
         terminal.printf("\n2 - OP2\n");
         terminal.printf("\n3 - OP3\n");
         terminal.printf("\n4 - OP4\n");
         terminal.printf("\n5 - EXIT\n");
+    }
+
+    private void printSudoku(Integer[][] sudoku, TextTerminal terminal) {
+        int fin = 0;
+        terminal.println("---------------------------");
+        for (int row = 0; row < 9; row++) {
+            for (int column = 0; column < 9; column++) {
+                if (column % 3 == 0) {
+                    if (column == 0) {
+                        if (sudoku[row][column] == 0)
+                            terminal.printf(" | . ");
+                        else
+                            terminal.printf(" | " + sudoku[row][column] + " ");
+                    } else {
+                        if (sudoku[row][column] == 0)
+                            terminal.printf("| . ");
+                        else
+                            terminal.printf("| " + sudoku[row][column] + " ");
+                    }
+                } else if (column == sudoku.length - 1) {
+                    if (sudoku[row][column] == 0)
+                        terminal.printf(". |\n");
+                    else
+                        terminal.printf(sudoku[row][column] + " |\n");
+                } else {
+                    if (sudoku[row][column] == 0)
+                        terminal.printf(". ");
+                    else
+                        terminal.printf(sudoku[row][column] + " ");
+                }
+            }
+            fin++;
+            if (fin % 3 == 0)
+                terminal.println("---------------------------");
+        }
     }
 }

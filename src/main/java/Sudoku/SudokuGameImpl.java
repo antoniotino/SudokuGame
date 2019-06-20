@@ -3,6 +3,7 @@ package Sudoku;
 import Interface.SudokuGame;
 import Interface.MessageListener;
 
+import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
@@ -11,6 +12,7 @@ import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.ObjectDataReply;
+import net.tomp2p.storage.Data;
 
 import java.net.InetAddress;
 import java.util.logging.Logger;
@@ -24,7 +26,8 @@ public class SudokuGameImpl implements SudokuGame {
     final private PeerDHT _dht;
     final private int DEFAULT_MASTER_PORT = 4000;
 
-    /* Constructor */
+    private String difficulty;
+
     public SudokuGameImpl(int _id, String _master_peer, final MessageListener _listener) throws Exception {
 
         peer = new PeerBuilder(Number160.createHash(_id)).ports(DEFAULT_MASTER_PORT + _id).start();
@@ -53,16 +56,29 @@ public class SudokuGameImpl implements SudokuGame {
         });
     }
 
-    /*   public Integer[][] generateNewSudoku(String _game_name) {
-        return new Integer[0][];
+    public Integer[][] generateNewSudoku(String _game_name) {
+        try {
+            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+            futureGet.awaitUninterruptibly();
+
+            if (futureGet.isSuccess() && futureGet.isEmpty()) {
+				SudokuChallenge sudokuChallenge = new SudokuChallenge(_game_name, difficulty);
+                _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
+                return sudokuChallenge.getSudoku().getMatrix();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
-    public boolean join(String _game_name, String _nickname) {
+   /* public boolean join(String _game_name, String _nickname) {
         return false;
     }
 
     public Integer[][] getSudoku(String _game_name) {
-        return new Integer[0][];
+        return new Integer[][];
     }
 
     public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
@@ -72,5 +88,10 @@ public class SudokuGameImpl implements SudokuGame {
     /* Metodo temporaneo: da rivedere */
     public void leaveNetwork() {
         _dht.peer().announceShutdown().start().awaitUninterruptibly();
+
+    }
+
+    public  void choose_difficulty(String difficulty){
+        this.difficulty = difficulty;
     }
 }

@@ -14,6 +14,7 @@ University of Salerno
 ## Technologies/Library
 * Java SE (version 8)
 * Apache Maven
+* JSON
 * TomP2P
 * Docker
 * Other technologies will be added soon...
@@ -32,8 +33,11 @@ Each user can place a number of the sudoku game, if it is not already placed tak
 * Integer placeNumber(String _game_name, int _i, int _j, int _number);
     * This method allows to place a new solution number in the game
 ## New Features
-* We're thinking about it
-* ...
+* leaveNetwork()
+    * This method allows a peer to leave the network
+* choose_difficulty(String difficulty)
+    * This method allows you to set the difficulty of sudoku
+* Other features will be added soon...
 
 ## Solution 
 Project under construction
@@ -42,7 +46,9 @@ Project under construction
 Project under construction
 
 ## Compile & Execute in local environment
-* Use either Eclipse, Intellij or any other IDE you like
+* You could use:
+    * Eclipse, Intellij or any other IDE you like
+    * Terminal (PowerShell/CMD on Windows or BASH on Linux-based system)
 * Other information will be added soon...
 
 ## Build in a Docker container

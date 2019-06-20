@@ -10,7 +10,7 @@ public interface SudokuGame {
      * @param _game_name a String, the sudoku game name.
      * @return sudoku (matrix)
      */
-//    Integer[][] generateNewSudoku(String _game_name);
+    Integer[][] generateNewSudoku(String _game_name);
 
     /**
      * Joins in a game.
@@ -45,4 +45,9 @@ public interface SudokuGame {
      * Allows a peer to leave the network
      */
     void leaveNetwork();
+
+    /**
+     * Allows you to set the difficulty of sudoku
+     */
+    void choose_difficulty(String difficulty);
 }

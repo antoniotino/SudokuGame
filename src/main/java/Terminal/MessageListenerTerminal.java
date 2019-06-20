@@ -17,10 +17,11 @@ public class MessageListenerTerminal implements MessageListener {
 
     /* da rivedere */
     public Object parseMessage(Object obj){
-        TextIO textIO = TextIoFactory.getTextIO();
+       /* TextIO textIO = TextIoFactory.getTextIO();
         TextTerminal terminal = textIO.getTextTerminal();
         terminal.printf("\n["+peerID+"] (Direct Message Received) "+obj+"\n\n");
-        LOGGER.info("["+peerID+"] (Direct Message Received) " + obj);
+        LOGGER.info("["+peerID+"] (Direct Message Received) " + obj);*/
+        System.out.println("MessageListenerTerminal");
         return "success";
     }
 }

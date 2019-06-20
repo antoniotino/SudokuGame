@@ -10,9 +10,6 @@ import java.util.logging.Logger;
 public class StartGame {
 
     public static void main(String[] args) throws Exception {
-
-        /* Commento temporaneo: verificare la fattibilità dell'idea */
-
         int peerID = 0;
         final Logger LOGGER = Logger.getLogger(SudokuGameImpl.class.getName());
         Scanner scanner = new Scanner(System.in);
