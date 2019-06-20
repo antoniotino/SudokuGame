@@ -1,30 +1,45 @@
 package Starter;
 
 import Sudoku.SudokuGameImpl;
+import User.User;
 import Terminal.MessageListenerTerminal;
 import Terminal.TerminalGrafic;
 
+import org.beryx.textio.TextIO;
+import org.beryx.textio.TextIoFactory;
+import org.beryx.textio.TextTerminal;
+
 import java.util.Scanner;
-import java.util.logging.Logger;
 
 public class StartGame {
 
     public static void main(String[] args) throws Exception {
         int peerID = 0;
-        final Logger LOGGER = Logger.getLogger(SudokuGameImpl.class.getName());
-        Scanner scanner = new Scanner(System.in);
+        //int peerID = Integer.parseInt(args[0]);
 
-        System.out.print("Choose the graphic quality: \t 1) Terminal \t 2) GUI \t: ");
-        int choose = scanner.nextInt();
+        TextIO textIO = TextIoFactory.getTextIO();
+        TextTerminal terminal = textIO.getTextTerminal();
+
+        terminal.printf("\n\n \t * * * * * * * * * * * * * * * * * * * * *\n");
+        terminal.printf("\t *\tWelcome in SudokuGame \t\t *\n");
+        terminal.printf("\t *\tCreated by Jack&Tino \t\t *\n");
+        terminal.printf("\t * * * * * * * * * * * * * * * * * * * * *\n\n");
+
+        terminal.printf("Insert your nickname: ");
+        String nickname = textIO.newStringInputReader().read();
+        User user = new User(nickname);
+
+        terminal.printf("Choose the graphic quality:\t1) Terminal \t 2) GUI : ");
+        int choose = textIO.newIntInputReader().withMaxVal(2).withMinVal(1).read();
         if(choose == 1){
+            terminal.resetLine();
+            terminal.abort();
             SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
-            LOGGER.info("Open terminal");
-            TerminalGrafic terminal = new TerminalGrafic(peer, peerID);
-            terminal.startTerminal();
-            LOGGER.info("Close terminal");
-        }else if(choose == 2)
+            TerminalGrafic terminalGrafic = new TerminalGrafic(peer, peerID, user);
+            terminalGrafic.startTerminal();
+        }else if(choose == 2){
+            terminal.abort();
             System.out.println("GUI");
-        else
-            System.out.println("Choose error!");
+        }
     }
 }

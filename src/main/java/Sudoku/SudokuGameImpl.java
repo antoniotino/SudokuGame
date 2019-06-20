@@ -15,12 +15,8 @@ import net.tomp2p.rpc.ObjectDataReply;
 import net.tomp2p.storage.Data;
 
 import java.net.InetAddress;
-import java.util.logging.Logger;
-
 
 public class SudokuGameImpl implements SudokuGame {
-
-    private final static Logger LOGGER = Logger.getLogger(SudokuGameImpl.class.getName());
 
     final private Peer peer;
     final private PeerDHT _dht;
@@ -31,22 +27,14 @@ public class SudokuGameImpl implements SudokuGame {
     public SudokuGameImpl(int _id, String _master_peer, final MessageListener _listener) throws Exception {
 
         peer = new PeerBuilder(Number160.createHash(_id)).ports(DEFAULT_MASTER_PORT + _id).start();
-        LOGGER.info("Created a peer... Start listening to incoming connections");
-
         _dht = new PeerBuilderDHT(peer).start();
-        LOGGER.info("Initial DHT address = " + this.peer.peerAddress());
 
         FutureBootstrap fb = peer.bootstrap().inetAddress(InetAddress.getByName(_master_peer)).ports(DEFAULT_MASTER_PORT).start();
         fb.awaitUninterruptibly();
-        LOGGER.info("Bootstrapping...");
-
-        if (fb.isSuccess()) {
-            LOGGER.info("Bootstrapping successful");
+        if (fb.isSuccess())
             peer.discover().peerAddress(fb.bootstrapTo().iterator().next()).start().awaitUninterruptibly();
-        } else {
-            LOGGER.severe("Bootstrapping failed: error in master peer");
+        else
             throw new Exception("Bootstrapping failed: error in master peer");
-        }
 
         peer.objectDataReply(new ObjectDataReply() {
 
