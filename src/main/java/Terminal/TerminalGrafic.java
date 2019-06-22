@@ -7,11 +7,14 @@ import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
 
+import java.util.HashMap;
+
 public class TerminalGrafic {
 
     private User user;
     private SudokuGameImpl peer;
     private int peerID;
+    private String join_game;
 
     public TerminalGrafic(SudokuGameImpl peer, int peerID, User user) {
         this.peer = peer;
@@ -27,7 +30,7 @@ public class TerminalGrafic {
             infoUser(user, peerID, terminal);
             printMenu(terminal);
 
-            int option = textIO.newIntInputReader().withMaxVal(5).withMinVal(1).read("\nOption");
+            int option = textIO.newIntInputReader().withMaxVal(6).withMinVal(1).read("\nOption");
             switch (option) {
                 case 1:
                     terminal.printf("Insert the name's game: ");
@@ -52,18 +55,40 @@ public class TerminalGrafic {
                             break;
                     }
                     peer.choose_difficulty(difficulty);
-                    printSudoku(peer.generateNewSudoku(_game_name), terminal);
+                    Integer [][] matrix = peer.generateNewSudoku(_game_name);
+                    if(matrix.length == 0)
+                        terminal.printf("\nThere is already a room with this name");
+                    else
+                        terminal.printf("\nCreated a room with this name");
                     break;
-                case 2:
-                    System.out.println("OP2");
+                case 2: //da vedere!!
+                    HashMap<String, String> room_active = peer.active_room();
+                    terminal.printf("\n\nRooms actually active");
+                    if(room_active.size() == 0)
+                        terminal.printf("\nThere are no active rooms\n\n");
+                    else
+                        for(String str: room_active.keySet())
+                            terminal.printf("\n"+str+"(Difficulty: "+room_active.get(str)+")");
+                    terminal.printf("\n");
                     break;
                 case 3:
-                    System.out.println("OP3");
+                    join_game = textIO.newStringInputReader().read("Name's game: ");
+                    if(peer.join(join_game, user.getNickname()))
+                        terminal.printf("\nSuccessfully join \n");
+                    else
+                        terminal.printf("\nError in join to game \n");
                     break;
                 case 4:
-                    System.out.println("OP4");
+                    if(join_game == null)
+                        terminal.printf("\nYou need to join a game\n");
+                    else
+                        printSudoku(peer.getSudoku(join_game), join_game, terminal);
                     break;
                 case 5:
+                    if(join_game == null)
+                        terminal.printf("\nYou need to join a game\n");
+                    break;
+                case 6:
                     terminal.printf("\nAre you sure to leave the network?\n");
                     boolean exit = textIO.newBooleanInputReader().withDefaultValue(false).read("exit?");
                     if (exit) {
@@ -71,27 +96,27 @@ public class TerminalGrafic {
                         System.exit(0);
                     }
                     break;
-                default:
-                    terminal.printf("\n Error into choose!\n");
-                    break;
+                default: break;
             }
         }
     }
 
     private void infoUser(User user, int peerID, TextTerminal terminal) {
-        terminal.printf("\n\n[PeerID: " + peerID + "] Nickname: " + user.getNickname() + " - Score: " + user.getScore() + "\n");
+        terminal.printf("\n\n[PeerID: " + peerID + "] Nickname: " + user.getNickname() + " - Score: " + user.getScore() + "\n\n");
     }
 
     private void printMenu(TextTerminal terminal) {
         terminal.printf("\n1 - Create a new sudoku\n");
-        terminal.printf("\n2 - Join in a game\n");
-        terminal.printf("\n3 - OP3\n");
-        terminal.printf("\n4 - OP4\n");
-        terminal.printf("\n5 - EXIT\n");
+        terminal.printf("\n2 - View rooms \n");
+        terminal.printf("\n3 - Join in a game\n");
+        terminal.printf("\n4 - Get sudoku\n");
+        terminal.printf("\n5 - Place a number \n");
+        terminal.printf("\n6 - EXIT\n");
     }
 
-    private void printSudoku(Integer[][] sudoku, TextTerminal terminal) {
+    private void printSudoku(Integer[][] sudoku, String _game_name, TextTerminal terminal) {
         int fin = 0;
+        terminal.printf("\n\nRoom: "+_game_name);
         terminal.println("\n\n---------------------------");
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {

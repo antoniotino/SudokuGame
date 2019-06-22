@@ -14,8 +14,7 @@ import java.util.Scanner;
 public class StartGame {
 
     public static void main(String[] args) throws Exception {
-        int peerID = 0;
-        //int peerID = Integer.parseInt(args[0]);
+        int peerID = Integer.parseInt(args[0]);
 
         TextIO textIO = TextIoFactory.getTextIO();
         TextTerminal terminal = textIO.getTextTerminal();

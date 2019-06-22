@@ -37,6 +37,8 @@ Each user can place a number of the sudoku game, if it is not already placed tak
     * This method allows a peer to leave the network
 * choose_difficulty(String difficulty)
     * This method allows you to set the difficulty of sudoku
+* HashMap<String, String> active_room()
+    * This method allows to view the active rooms (matches in progress)  
 * Other features will be added soon...
 
 ## Solution 
