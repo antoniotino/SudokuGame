@@ -1,6 +1,5 @@
 package Sudoku;
 
-import User.User;
 import net.tomp2p.peers.PeerAddress;
 import org.json.simple.parser.ParseException;
 
@@ -11,7 +10,6 @@ import java.util.HashMap;
 public class SudokuChallenge implements Serializable {
 
     private Sudoku sudoku;
-    private SolvedSudoku solvedSudoku;
     private String _game_name;
 
     /**
@@ -37,6 +35,45 @@ public class SudokuChallenge implements Serializable {
 
         peersInGame.put(peerAddress, _game_name);
         return true;
+    }
+
+    /**
+     * Method that checks if the number can be entered
+     */
+    public boolean checker_sudoku(int elem, int row, int column){
+        Integer[][] solved = sudoku.getMatrixSolved();
+        if(solved[row][column] == elem){
+            sudoku.insert_number(elem, row, column);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Method that checks if the game is finished
+     */
+    public boolean end_game(){
+        Integer[][] unsolved = sudoku.getMatrixUnsolved();
+        Integer[][] solved = sudoku.getMatrixSolved();
+
+        for(int rows=0; rows<9; rows++)
+            for(int columns=0; columns<9; columns++)
+                if(unsolved[rows][columns] != solved[rows][columns])
+                    return false;
+
+        return true;
+    }
+
+    /**
+     * Method that checks if the number has already been entered
+     */
+    public boolean number_already_insert(int elem, int row, int column){
+        Integer[][] unsolved = sudoku.getMatrixUnsolved();
+        if(unsolved[row][column] == elem)
+            return true;
+
+        return false;
     }
 
     /**

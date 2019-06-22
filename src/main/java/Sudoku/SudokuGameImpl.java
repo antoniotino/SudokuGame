@@ -2,6 +2,7 @@ package Sudoku;
 
 import Interface.SudokuGame;
 import Interface.MessageListener;
+import User.User;
 
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PeerBuilderDHT;
@@ -25,6 +26,12 @@ public class SudokuGameImpl implements SudokuGame {
     final private PeerDHT _dht;
     final private int DEFAULT_MASTER_PORT = 4000;
     final private int ID = 1000;
+
+    /**
+     * A map that contains users
+     * Key: PeerAddress and Value: user
+     */
+    private HashMap<PeerAddress, User> usersInGame = new HashMap<PeerAddress, User>();
 
     /**
      * A map that contains the active rooms
@@ -77,7 +84,7 @@ public class SudokuGameImpl implements SudokuGame {
             if (futureGet.isSuccess()) {
                 SudokuChallenge sudokuChallenge = new SudokuChallenge(_game_name, difficulty);
                 _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
-                return sudokuChallenge.getSudoku().getMatrix();
+                return sudokuChallenge.getSudoku().getMatrixUnsolved();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +93,7 @@ public class SudokuGameImpl implements SudokuGame {
         return null;
     }
 
-    public boolean join(String _game_name, String _nickname) {
+    public boolean join(String _game_name, String _nickname) { //dubbi
         try {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
@@ -96,7 +103,7 @@ public class SudokuGameImpl implements SudokuGame {
                 SudokuChallenge sudokuChallenge;
                 sudokuChallenge = (SudokuChallenge) futureGet.dataMap().values().iterator().next().object();
 
-                if (sudokuChallenge.addIntoGame(_dht.peer().peerAddress(), _nickname)){
+                if (sudokuChallenge.addIntoGame(_dht.peer().peerAddress(), _nickname)){ //qui
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
                     String message = _nickname + " join in " + _game_name;
                     sendMessage(message, sudokuChallenge);
@@ -124,7 +131,7 @@ public class SudokuGameImpl implements SudokuGame {
                 SudokuChallenge sudokuChallenge = challenges.get(_game_name);
                 sudokuChallenge = (SudokuChallenge) futureGet.dataMap().values().iterator().next().object();
 
-                return sudokuChallenge.getSudoku().getMatrix();
+                return sudokuChallenge.getSudoku().getMatrixUnsolved();
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -133,9 +140,57 @@ public class SudokuGameImpl implements SudokuGame {
         return null;
     }
 
-  /*  public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
+    public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
+        try
+        {
+            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+            futureGet.awaitUninterruptibly();
+
+            SudokuChallenge sudokuChallenge = challenges.get(_game_name);
+
+            if (futureGet.isSuccess() && !futureGet.isEmpty()){
+
+                //Checks if the number can be entered
+                if(sudokuChallenge.checker_sudoku(_number, _i, _j)) {
+                    //update sudoku in DHT
+                    _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
+
+                    //Add +1 to user
+                    for(PeerAddress peerAddress : usersInGame.keySet())
+                        if(peerAddress.equals(peer.peerAddress())){
+                            User u = usersInGame.get(peerAddress);
+                            u.increaseScore(1);
+                            usersInGame.put(peerAddress, u);
+                        }
+                    //Checks if the game is finished
+                    if(sudokuChallenge.end_game()){
+                        //inviare msg a tutti <- da implementare
+                    }
+                }else if(sudokuChallenge.number_already_insert(_number, _i, _j)){ //Checks if the number has already been entered
+                    //Add +0 to user
+                    for(PeerAddress peerAddress : usersInGame.keySet())
+                        if(peerAddress.equals(peer.peerAddress())){
+                            User u = usersInGame.get(peerAddress);
+                            u.increaseScore(0);
+                            usersInGame.put(peerAddress, u);
+                        }
+                }else{
+                    //Remove -1 to user
+                    for(PeerAddress peerAddress : usersInGame.keySet())
+                        if(peerAddress.equals(peer.peerAddress())) {
+                            User u = usersInGame.get(peerAddress);
+                            u.decreaseScore(1);
+                            usersInGame.put(peerAddress, u);
+                        }
+                }
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
-    }*/
+    }
 
     /* Other Methods */
 
@@ -153,6 +208,13 @@ public class SudokuGameImpl implements SudokuGame {
     }
 
     /**
+     * Add the user to HashMap
+     */
+    public void addUser(User user){
+        usersInGame.put(peer.peerAddress(), user);
+    }
+
+    /**
      * Getter Methods
      */
     public ArrayList<Object> getMessages() {
@@ -164,7 +226,7 @@ public class SudokuGameImpl implements SudokuGame {
     /**
      * Allows a peer to leave the network
      */
-    public void leaveNetwork(/*String _nickname, String _game_name*/) { //Implemtare invio msg
+    public void leaveNetwork(/*String _nickname, String _game_name*/) { //Implementare invio msg
         _dht.peer().announceShutdown().start().awaitUninterruptibly();
 /*        String message = _nickname + " join in " + _game_name;
         sendMessage(message, sudokuChallenge);*/

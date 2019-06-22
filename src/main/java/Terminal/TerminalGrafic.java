@@ -15,6 +15,7 @@ public class TerminalGrafic {
     private SudokuGameImpl peer;
     private int peerID;
     private String join_game;
+    private boolean join;
 
     public TerminalGrafic(SudokuGameImpl peer, int peerID, User user) {
         this.peer = peer;
@@ -73,13 +74,14 @@ public class TerminalGrafic {
                     break;
                 case 3:
                     join_game = textIO.newStringInputReader().read("Name's game: ");
-                    if(peer.join(join_game, user.getNickname()))
+                    join = peer.join(join_game, user.getNickname());
+                    if(join)
                         terminal.printf("\nSuccessfully join \n");
                     else
                         terminal.printf("\nError in join to game \n");
                     break;
                 case 4:
-                    if(join_game == null)
+                    if(join_game == null || !join)
                         terminal.printf("\nYou need to join a game\n");
                     else
                         printSudoku(peer.getSudoku(join_game), join_game, terminal);
@@ -87,6 +89,12 @@ public class TerminalGrafic {
                 case 5:
                     if(join_game == null)
                         terminal.printf("\nYou need to join a game\n");
+                    else{
+                       int ele = textIO.newIntInputReader().read("Insert a number: ");
+                       int row = textIO.newIntInputReader().read("Row: ");
+                       int column = textIO.newIntInputReader().read("Column: ");
+                       peer.placeNumber(join_game, row, column, ele);
+                    }
                     break;
                 case 6:
                     terminal.printf("\nAre you sure to leave the network?\n");
@@ -107,7 +115,7 @@ public class TerminalGrafic {
 
     private void printMenu(TextTerminal terminal) {
         terminal.printf("\n1 - Create a new sudoku\n");
-        terminal.printf("\n2 - View rooms \n");
+        terminal.printf("\n2 - Show rooms \n");
         terminal.printf("\n3 - Join in a game\n");
         terminal.printf("\n4 - Get sudoku\n");
         terminal.printf("\n5 - Place a number \n");
