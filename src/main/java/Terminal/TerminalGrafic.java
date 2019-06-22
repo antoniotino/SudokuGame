@@ -62,7 +62,7 @@ public class TerminalGrafic {
                     else
                         terminal.printf("\nCreated a room with this name");
                     break;
-                case 2: //da vedere!!
+                case 2:
                     HashMap<String, String> room_active = peer.active_room();
                     terminal.printf("\n\nRooms actually active");
                     if(room_active.size() == 0)

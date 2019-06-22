@@ -22,7 +22,6 @@ public class Sudoku implements Serializable {
 
     /**
      * Constructor
-     *
      * @param name: name of the sudoku
      */
     public Sudoku(String name) {

@@ -25,7 +25,6 @@ public class SudokuGameImpl implements SudokuGame {
     final private Peer peer;
     final private PeerDHT _dht;
     final private int DEFAULT_MASTER_PORT = 4000;
-    final private int ID = 1000;
 
     /**
      * A map that contains users
@@ -37,7 +36,7 @@ public class SudokuGameImpl implements SudokuGame {
      * A map that contains the active rooms
      * Key: game name and Value: difficulty
      */
-    private HashMap<String, String> room_active = new HashMap<>();
+    private HashMap<String, String> room_active = new HashMap<String, String>();
 
     /**
      * A map containing the sudoku relative to game name
@@ -81,9 +80,13 @@ public class SudokuGameImpl implements SudokuGame {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
 
-            if (futureGet.isSuccess()) {
+            FutureGet room = _dht.get(Number160.MAX_VALUE.createHash("room_active")).start();
+            room.awaitUninterruptibly(); //tmp
+
+            if (futureGet.isSuccess() && room.isSuccess()) { //tmp
                 SudokuChallenge sudokuChallenge = new SudokuChallenge(_game_name, difficulty);
                 _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
+                _dht.put(Number160.createHash("room_active")).data(new Data(room_active)).start().awaitUninterruptibly();
                 return sudokuChallenge.getSudoku().getMatrixUnsolved();
             }
         } catch (Exception e) {
@@ -164,7 +167,7 @@ public class SudokuGameImpl implements SudokuGame {
                         }
                     //Checks if the game is finished
                     if(sudokuChallenge.end_game()){
-                        //inviare msg a tutti <- da implementare
+                        //inviare msg di vittoria a tutti <- da implementare
                     }
                 }else if(sudokuChallenge.number_already_insert(_number, _i, _j)){ //Checks if the number has already been entered
                     //Add +0 to user
@@ -244,10 +247,22 @@ public class SudokuGameImpl implements SudokuGame {
      * Allows to view the active rooms
      */
 
-    public HashMap<String, String> active_room() { //Bug qui
-        for(String str: room_active.keySet())
-            System.out.println(str);
+    public HashMap<String, String> active_room() {
 
-        return room_active;
+        try{
+            FutureGet room = _dht.get(Number160.createHash("room_active")).start();
+            room.awaitUninterruptibly();
+
+            if (room.isSuccess()){
+                HashMap<String, String> r;
+                r = (HashMap<String, String>) room.dataMap().values().iterator().next().object();
+
+                return r;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
