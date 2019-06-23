@@ -33,7 +33,7 @@ Each user can place a number of the sudoku game, if it is not already placed tak
 * Integer placeNumber(String _game_name, int _i, int _j, int _number);
     * This method allows to place a new solution number in the game
 ## New Features
-* leaveNetwork()
+* boolean leaveNetwork(String _nickname, String _game_name)
     * This method allows a peer to leave the network
 * choose_difficulty(String difficulty)
     * This method allows you to set the difficulty of sudoku
