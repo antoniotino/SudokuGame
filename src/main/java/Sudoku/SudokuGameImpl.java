@@ -39,7 +39,7 @@ public class SudokuGameImpl implements SudokuGame {
     private HashMap<String, String> room_active = new HashMap<String, String>();
 
     /**
-     * A map containing the sudoku relative to game name
+     * A map that contains the sudoku relative to game name
      * Key: game name and Value: Sudoku
      */
     private HashMap<String, SudokuChallenge> challenges = new HashMap<String, SudokuChallenge>();
@@ -81,7 +81,7 @@ public class SudokuGameImpl implements SudokuGame {
             futureGet.awaitUninterruptibly();
 
             FutureGet room = _dht.get(Number160.MAX_VALUE.createHash("room_active")).start();
-            room.awaitUninterruptibly(); //tmp
+            room.awaitUninterruptibly();
 
             if (futureGet.isSuccess() && room.isSuccess()) { //tmp
                 SudokuChallenge sudokuChallenge = new SudokuChallenge(_game_name, difficulty);
@@ -96,17 +96,17 @@ public class SudokuGameImpl implements SudokuGame {
         return null;
     }
 
-    public boolean join(String _game_name, String _nickname) { //dubbi
+    public boolean join(String _game_name, String _nickname) {
         try {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
             if (futureGet.isSuccess()) {
-                if(futureGet.isEmpty()) return false;
+                if (futureGet.isEmpty()) return false;
 
                 SudokuChallenge sudokuChallenge;
                 sudokuChallenge = (SudokuChallenge) futureGet.dataMap().values().iterator().next().object();
 
-                if (sudokuChallenge.addIntoGame(_dht.peer().peerAddress(), _nickname)){ //qui
+                if (sudokuChallenge.addIntoGame(_dht.peer().peerAddress(), _nickname)) {
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
                     String message = _nickname + " join in " + _game_name;
                     sendMessage(message, sudokuChallenge);
@@ -123,12 +123,12 @@ public class SudokuGameImpl implements SudokuGame {
         return false;
     }
 
-    public Integer[][] getSudoku(String _game_name){
-        try{
+    public Integer[][] getSudoku(String _game_name) {
+        try {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
 
-            if (futureGet.isSuccess()){
+            if (futureGet.isSuccess()) {
 
                 //I take the sudoku relative to _game_name
                 SudokuChallenge sudokuChallenge = challenges.get(_game_name);
@@ -136,7 +136,7 @@ public class SudokuGameImpl implements SudokuGame {
 
                 return sudokuChallenge.getSudoku().getMatrixUnsolved();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -144,51 +144,57 @@ public class SudokuGameImpl implements SudokuGame {
     }
 
     public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
-        try
-        {
+        try {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
 
             SudokuChallenge sudokuChallenge = challenges.get(_game_name);
 
-            if (futureGet.isSuccess() && !futureGet.isEmpty()){
+            if (futureGet.isSuccess() && !futureGet.isEmpty()) {
 
                 //Checks if the number can be entered
-                if(sudokuChallenge.checker_sudoku(_number, _i, _j)) {
+                if (sudokuChallenge.checker_sudoku(_number, _i, _j)) {
                     //update sudoku in DHT
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
 
                     //Add +1 to user
-                    for(PeerAddress peerAddress : usersInGame.keySet())
-                        if(peerAddress.equals(peer.peerAddress())){
+                    for (PeerAddress peerAddress : usersInGame.keySet())
+                        if (peerAddress.equals(peer.peerAddress())) {
                             User u = usersInGame.get(peerAddress);
                             u.increaseScore(1);
                             usersInGame.put(peerAddress, u);
                         }
                     //Checks if the game is finished
-                    if(sudokuChallenge.end_game()){
+                    if (sudokuChallenge.end_game()) {
                         //inviare msg di vittoria a tutti <- da implementare
                     }
-                }else if(sudokuChallenge.number_already_insert(_number, _i, _j)){ //Checks if the number has already been entered
+
+                    return 1;
+
+                } else if (sudokuChallenge.number_already_insert(_number, _i, _j)) { //Checks if the number has already been entered
                     //Add +0 to user
-                    for(PeerAddress peerAddress : usersInGame.keySet())
-                        if(peerAddress.equals(peer.peerAddress())){
+                    for (PeerAddress peerAddress : usersInGame.keySet())
+                        if (peerAddress.equals(peer.peerAddress())) {
                             User u = usersInGame.get(peerAddress);
                             u.increaseScore(0);
                             usersInGame.put(peerAddress, u);
                         }
-                }else{
+
+                    return 0;
+                } else { //the number is wrong
                     //Remove -1 to user
-                    for(PeerAddress peerAddress : usersInGame.keySet())
-                        if(peerAddress.equals(peer.peerAddress())) {
+                    for (PeerAddress peerAddress : usersInGame.keySet())
+                        if (peerAddress.equals(peer.peerAddress())) {
                             User u = usersInGame.get(peerAddress);
                             u.decreaseScore(1);
                             usersInGame.put(peerAddress, u);
                         }
+
+                    return -1;
                 }
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -211,9 +217,18 @@ public class SudokuGameImpl implements SudokuGame {
     }
 
     /**
+     * Method that elects the winner / winners of the game
+     */
+    public void victoryMsg(SudokuChallenge sudokuChallenge) {
+
+
+
+    }
+
+    /**
      * Add the user to HashMap
      */
-    public void addUser(User user){
+    public void addUser(User user) {
         usersInGame.put(peer.peerAddress(), user);
     }
 
@@ -229,11 +244,35 @@ public class SudokuGameImpl implements SudokuGame {
     /**
      * Allows a peer to leave the network
      */
-    public void leaveNetwork(/*String _nickname, String _game_name*/) { //Implementare invio msg
-        _dht.peer().announceShutdown().start().awaitUninterruptibly();
-/*        String message = _nickname + " join in " + _game_name;
-        sendMessage(message, sudokuChallenge);*/
+    public boolean leaveNetwork(String _nickname, String _game_name, boolean join) {
 
+        if(join){
+            try {
+                FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+                futureGet.awaitUninterruptibly();
+                if (futureGet.isSuccess())
+                    if (futureGet.isEmpty()) return false;
+
+                SudokuChallenge sudokuChallenge;
+                sudokuChallenge = (SudokuChallenge) futureGet.dataMap().values().iterator().next().object();
+
+                if (sudokuChallenge.removeIntoGame(_dht.peer().peerAddress())) {
+                    String message = _nickname + " leave " + _game_name;
+                    sendMessage(message, sudokuChallenge);
+
+                    _dht.peer().announceShutdown().start().awaitUninterruptibly();
+
+                    return true;
+                }
+
+                return false;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        _dht.peer().announceShutdown().start().awaitUninterruptibly();
+        return true;
     }
 
     /**
@@ -249,17 +288,17 @@ public class SudokuGameImpl implements SudokuGame {
 
     public HashMap<String, String> active_room() {
 
-        try{
+        try {
             FutureGet room = _dht.get(Number160.createHash("room_active")).start();
             room.awaitUninterruptibly();
 
-            if (room.isSuccess()){
+            if (room.isSuccess()) {
                 HashMap<String, String> r;
                 r = (HashMap<String, String>) room.dataMap().values().iterator().next().object();
 
                 return r;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

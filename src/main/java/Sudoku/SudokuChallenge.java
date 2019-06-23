@@ -13,7 +13,7 @@ public class SudokuChallenge implements Serializable {
     private String _game_name;
 
     /**
-     * A map containing the peers connected to the sudoku
+     * A map that contains the peers connected to the sudoku
      * Key: PeerAddress and Value: _game_name
      */
     private HashMap<PeerAddress, String> peersInGame = new HashMap<PeerAddress, String>();
@@ -27,7 +27,7 @@ public class SudokuChallenge implements Serializable {
     /**
      *  The method adds a user into the game
      */
-    public Boolean addIntoGame(PeerAddress peerAddress, String _game_name)
+    public boolean addIntoGame(PeerAddress peerAddress, String _game_name)
     {
         for(PeerAddress peer : peersInGame.keySet())
             if(peer.equals(peerAddress))
@@ -38,12 +38,25 @@ public class SudokuChallenge implements Serializable {
     }
 
     /**
+     *  The method remove the user into the game
+     */
+    public boolean removeIntoGame(PeerAddress peerAddress)
+    {
+        for(PeerAddress peer : peersInGame.keySet())
+            if(peer.equals(peerAddress)){
+                peersInGame.remove(peer);
+                return true;
+            }
+
+        return false;
+    }
+
+    /**
      * Method that checks if the number can be entered
      */
     public boolean checker_sudoku(int elem, int row, int column){
         Integer[][] solved = sudoku.getMatrixSolved();
         if(solved[row][column] == elem){
-            sudoku.insert_number(elem, row, column);
             return true;
         }
 
