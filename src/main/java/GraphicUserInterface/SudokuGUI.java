@@ -2,14 +2,14 @@ package GraphicUserInterface;
 
 import Sudoku.SudokuGameImpl;
 import User.User;
+
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.*;
+import java.util.TimerTask;
+
 public class SudokuGUI {
     private JFrame frame = new JFrame("Sudoku Game");
     private JTextField textField[][] = new JTextField[9][9];
@@ -20,10 +20,13 @@ public class SudokuGUI {
     private String join_game;
     private boolean join;
     Integer[][] sudoku = new Integer[9][9];
+    private List listMessages = new List();
     int hour=0;
     int minute=0;
     int second=0;
     int millisecond=0;
+    int count=3;
+    private JTextField focusedTextBox;
     // constructor for blank SudokuTable. adds empty text fields to gridpanel
     public SudokuGUI(SudokuGameImpl peer, int peerID, User user) {
         this.peer=peer;
@@ -37,12 +40,24 @@ public class SudokuGUI {
                 textField[row][column].setHorizontalAlignment(0);
                 textField[row][column].addActionListener(e -> ((JTextField) e.getSource()).setBackground(new Color(229,247,255)));
                 textField[row][column].addFocusListener(new FocusListener() {
-
                     public void focusLost(FocusEvent e) {
-                        ((JTextField) e.getSource()).setBackground(Color.WHITE);
+                        printSudoku(peer.getSudoku(join_game), join_game, textField);
+                        if(e.getSource() instanceof JTextField) {
+                            focusedTextBox = (JTextField) e.getSource();
+                        }
                     }
-
-                    public void focusGained(FocusEvent e) { }
+                    public void focusGained(FocusEvent e) {
+                        printSudoku(peer.getSudoku(join_game), join_game, textField);
+                    }
+                });
+                int finalRow = row;
+                int finalColumn = column;
+                textField[row][column].addActionListener(actionEvent -> {
+                    Integer value = peer.placeNumber(join_game, finalRow, finalColumn, Integer.parseInt(((JTextField)actionEvent.getSource()).getText()));
+                    if (value == -1) JOptionPane.showMessageDialog(frame, "Number not valid for cell");
+                    else if (value == 1) JOptionPane.showMessageDialog(frame, "Number valid for cell");
+                    else JOptionPane.showMessageDialog(frame, "Number already in cell");
+                    printSudoku(peer.getSudoku(join_game), join_game,textField);
                 });
                 gridPanel.add(textField[row][column]);
             }
@@ -63,20 +78,26 @@ public class SudokuGUI {
 
         gridBagConstraints.weighty = 1;
         gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.anchor = GridBagConstraints.EAST;
 
         JLabel labelInfo= new JLabel("PeerID:"+peerID + " Nickname: "+ user.getNickname()+ "\n Score: "+user.getScore(), JLabel.RIGHT);
         labelInfo.setFont(new Font("Helvetica", Font.BOLD, 15));
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipady = 20;
+        gridBagConstraints.weightx= 2;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
         rightPanel.add(labelInfo, gridBagConstraints);
 
         JLabel labelTime= new JLabel("00:00:00", JLabel.RIGHT);
         labelTime.setFont(new Font("Helvetica", Font.BOLD, 36));
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipady = 100;
+        gridBagConstraints.ipady = 20;
+        gridBagConstraints.weightx= 2;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
         rightPanel.add(labelTime, gridBagConstraints);
 
         JButton buttonCreate = new JButton("Create a new Sudoku");
@@ -229,71 +250,7 @@ public class SudokuGUI {
                 });
                 t.start();
                 sudoku=peer.getSudoku(join_game);
-                for (int row = 0; row < 9; row++) {
-                    for (int column = 0; column < 9; column++) {
-                        textField[row][column].setText(""+ (sudoku[row][column] !=0 ? sudoku[row][column] : ""));
-                        textField[row][column].setBackground(sudoku[row][column] !=0 ? Color.LIGHT_GRAY: Color.WHITE);
-                        textField[row][column].setEditable(sudoku[row][column] !=0 ? false: true);
-                        textField[row][column].setFocusable(sudoku[row][column] !=0 ? false: true);
-                        textField[row][column].setForeground(Color.BLACK);
-                        int finalRow = row;
-                        int finalColumn = column;
-                        textField[row][column].getDocument().addDocumentListener(new DocumentListener() {
-                            @Override
-                            public void insertUpdate(DocumentEvent documentEvent) {
-                                warn(documentEvent);
-                            }
-
-                            @Override
-                            public void removeUpdate(DocumentEvent documentEvent) {
-                                warn(documentEvent);
-                            }
-
-                            @Override
-                            public void changedUpdate(DocumentEvent documentEvent) {
-                                warn(documentEvent);
-                            }
-
-                            public void warn(DocumentEvent documentEvent) {
-                                Integer number;
-                                String value;
-                                DocumentEvent.EventType type = documentEvent.getType();
-                                if (type.equals(DocumentEvent.EventType.CHANGE)) {
-                                    if (Pattern.matches("\\d{1}", textField[finalRow][finalColumn].getText()) == true) {
-                                        value = textField[finalRow][finalColumn].getText();
-                                    } else {
-                                        value = "0";
-                                        JOptionPane.showMessageDialog(null, "String not valid", "Error", JOptionPane.ERROR_MESSAGE);
-                                    }
-                                }
-                                else if (type.equals(DocumentEvent.EventType.INSERT)) {
-                                    if (Pattern.matches("\\d{1}", textField[finalRow][finalColumn].getText()) == true) {
-                                        value = textField[finalRow][finalColumn].getText();
-                                    } else {
-                                        value = "0";
-                                        JOptionPane.showMessageDialog(null, "String not valid", "Error", JOptionPane.ERROR_MESSAGE);
-                                    }
-                                }
-                                else {
-                                    value = "0";
-                                }
-                                if (value == "0") {
-                                    number = 0;
-                                } else {
-                                    number = peer.placeNumber(join_game, finalRow, finalColumn, Integer.parseInt(textField[finalRow][finalColumn].getText()));
-                                }
-                                if (number == 0) {
-                                    textField[finalRow][finalColumn].setText("");
-                                } else if (number == -1) {
-                                    JOptionPane.showMessageDialog(null, "Number not valid for this cell, your score -1", "Error", JOptionPane.ERROR_MESSAGE);
-                                } else {
-                                    JOptionPane.showMessageDialog(null, "Number valid for this cell, your score +1", "Success", JOptionPane.INFORMATION_MESSAGE);
-                                    textField[finalRow][finalColumn].setEditable(false);
-                                }
-                            }
-                        });
-                    }
-                }
+                printSudoku(sudoku,join_game, textField);
                 buttonSudoku.setEnabled(false);
             }
         });
@@ -301,8 +258,8 @@ public class SudokuGUI {
         JButton buttonLeave = new JButton("Leave from Sudoku Game");
         buttonLeave.setFont(new Font("Helvetica", Font.BOLD, 15));
         buttonLeave.setOpaque(true);
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.ipady = 20;
         rightPanel.add(buttonLeave, gridBagConstraints);
         buttonLeave.addActionListener(actionEvent -> {
@@ -313,20 +270,50 @@ public class SudokuGUI {
             }
         });
 
-        JButton buttonHelp = new JButton("Get Help");
+        JButton buttonHelp = new JButton("Get Help x"+count);
         buttonHelp.setFont(new Font("Helvetica", Font.BOLD, 15));
         buttonHelp.setOpaque(true);
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.ipady = 20;
         rightPanel.add(buttonHelp, gridBagConstraints);
         buttonHelp.addActionListener(actionEvent -> {
-            int value= JOptionPane.showConfirmDialog(null, "Are you sure to leave the network?", "Leave Sudoku", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null);
-            if(value==JOptionPane.OK_OPTION) {
-                peer.leaveNetwork(user.getNickname(), join_game, join);
-                System.exit(0);
+            for(int row=0; row<9; row++){
+                for(int column=0; column<9; column++){
+                    if(focusedTextBox == textField[row][column] && count >0 && focusedTextBox.getText().equals("")) {
+                        peer.getHelp(join_game, row, column);
+                        printSudoku(peer.getSudoku(join_game),join_game,textField);
+                        count--;
+                        buttonHelp.setText("Get Help x"+count);
+                    }
+                }
             }
+            if(count ==0)
+                buttonHelp.setEnabled(false);
         });
+
+        JLabel labelMessages = new JLabel("Message");
+        labelMessages.setFont(new Font("Helvetica", Font.BOLD, 15));
+        labelMessages.setOpaque(true);
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.ipady = 20;
+        rightPanel.add(labelMessages, gridBagConstraints);
+        TimerTask tasknew = new TimerTask() {
+            @Override
+            public void run() {
+                listMessages.removeAll();
+                for (Object message : peer.getMessages()) {
+                    listMessages.add(message.toString());
+                }
+            }
+        };
+
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(tasknew, 5000, 5000);
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        mainPanel.add(listMessages, gridBagConstraints);
 
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -362,6 +349,18 @@ public class SudokuGUI {
             g.fillRect(2*getWidth()/3 - 1,0,3,getHeight());
             g.fillRect(0,getHeight()/3 - 1,getWidth(),3);
             g.fillRect(0,2*getHeight()/3 - 2,getWidth(),3);
+        }
+    }
+
+    public void printSudoku(Integer[][] sudoku, String join_game, JTextField textField[][]){
+        for (int row = 0; row < 9; row++) {
+            for (int column = 0; column < 9; column++) {
+                textField[row][column].setText("" + (sudoku[row][column] != 0 ? sudoku[row][column] : ""));
+                textField[row][column].setBackground(sudoku[row][column] != 0 ? Color.LIGHT_GRAY : Color.WHITE);
+                textField[row][column].setEditable(sudoku[row][column] != 0 ? false : true);
+                textField[row][column].setFocusable(sudoku[row][column] != 0 ? false : true);
+                textField[row][column].setForeground(Color.BLACK);
+            }
         }
     }
 

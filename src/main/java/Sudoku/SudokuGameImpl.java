@@ -167,6 +167,8 @@ public class SudokuGameImpl implements SudokuGame {
                             User u = usersInGame.get(peerAddress);
                             u.increaseScore(1);
                             usersInGame.put(peerAddress, u);
+                            String message = u.getNickname() + " add number " + _number+" in game: "+ _game_name;
+                            sendMessage(message, sudokuChallenge);
                         }
                     //Checks if the game is finished
                     if (sudokuChallenge.end_game()) {
