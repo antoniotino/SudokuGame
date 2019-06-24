@@ -58,9 +58,9 @@ public class TerminalGrafic {
                     peer.choose_difficulty(difficulty);
                     Integer [][] matrix = peer.generateNewSudoku(_game_name);
                     if(matrix.length == 0)
-                        terminal.printf("\nThere is already a sudoku with this name");
+                        terminal.printf("\nThere is already a room with this name");
                     else
-                        terminal.printf("\nCreated a sudoku with this name");
+                        terminal.printf("\nCreated a room with this name");
                     break;
                 case 2:
                     HashMap<String, String> room_active = peer.active_room();
@@ -90,25 +90,18 @@ public class TerminalGrafic {
                     if(join_game == null)
                         terminal.printf("\nYou need to join a game\n");
                     else{
-                       int ele = textIO.newIntInputReader().read("Insert a number: ");
-                       int row = textIO.newIntInputReader().read("Row: ");
-                       int column = textIO.newIntInputReader().read("Column: ");
-                       int result = peer.placeNumber(join_game, row, column, ele);
-                       if(result == 1)
-                           terminal.printf("\n\nNumber correct! \n\n");
-                       else if(result == 0)
-                           terminal.printf("\n\nNumber already insert!\n\n");
-                       else
-                           terminal.printf("\n\nIncorrect number! \n\n");
+                        int ele = textIO.newIntInputReader().read("Insert a number: ");
+                        int row = textIO.newIntInputReader().read("Row: ");
+                        int column = textIO.newIntInputReader().read("Column: ");
+                        peer.placeNumber(join_game, row, column, ele);
                     }
                     break;
                 case 6:
                     terminal.printf("\nAre you sure to leave the network?\n");
                     boolean exit = textIO.newBooleanInputReader().withDefaultValue(false).read("exit?");
                     if (exit) {
-                        if(peer.leaveNetwork(user.getNickname(), join_game, join))
-                            System.exit(0);
-                        terminal.printf("\nError in leaving the network!\n");
+                        peer.leaveNetwork();
+                        System.exit(0);
                     }
                     break;
                 default: break;
@@ -122,7 +115,7 @@ public class TerminalGrafic {
 
     private void printMenu(TextTerminal terminal) {
         terminal.printf("\n1 - Create a new sudoku\n");
-        terminal.printf("\n2 - Show active sudoku \n");
+        terminal.printf("\n2 - Show rooms \n");
         terminal.printf("\n3 - Join in a game\n");
         terminal.printf("\n4 - Get sudoku\n");
         terminal.printf("\n5 - Place a number \n");
