@@ -57,6 +57,7 @@ public class SudokuChallenge implements Serializable {
     public boolean checker_sudoku(int elem, int row, int column){
         Integer[][] solved = sudoku.getMatrixSolved();
         if(solved[row][column] == elem){
+            sudoku.insert_number(elem, row, column);
             return true;
         }
 

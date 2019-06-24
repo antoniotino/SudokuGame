@@ -42,7 +42,7 @@ public class SudokuGameImpl implements SudokuGame {
      * A map that contains the sudoku relative to game name
      * Key: game name and Value: Sudoku
      */
-    private HashMap<String, SudokuChallenge> challenges = new HashMap<String, SudokuChallenge>();
+    private HashMap<String, Integer[][]> challenges = new HashMap<String, Integer[][]>();
 
     private ArrayList<Object> messages = new ArrayList<Object>();
     private String difficulty;
@@ -111,7 +111,7 @@ public class SudokuGameImpl implements SudokuGame {
                     String message = _nickname + " join in " + _game_name;
                     sendMessage(message, sudokuChallenge);
 
-                    challenges.put(_game_name, sudokuChallenge);
+                    challenges.put(_game_name, sudokuChallenge.getSudoku().getMatrixUnsolved());
                     return true;
                 }
 
@@ -131,7 +131,7 @@ public class SudokuGameImpl implements SudokuGame {
             if (futureGet.isSuccess()) {
 
                 //I take the sudoku relative to _game_name
-                SudokuChallenge sudokuChallenge = challenges.get(_game_name);
+                SudokuChallenge sudokuChallenge;
                 sudokuChallenge = (SudokuChallenge) futureGet.dataMap().values().iterator().next().object();
 
                 return sudokuChallenge.getSudoku().getMatrixUnsolved();
@@ -148,12 +148,16 @@ public class SudokuGameImpl implements SudokuGame {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
 
-            SudokuChallenge sudokuChallenge = challenges.get(_game_name);
+            SudokuChallenge sudokuChallenge;
+            sudokuChallenge = (SudokuChallenge) futureGet.dataMap().values().iterator().next().object();
 
             if (futureGet.isSuccess() && !futureGet.isEmpty()) {
 
                 //Checks if the number can be entered
                 if (sudokuChallenge.checker_sudoku(_number, _i, _j)) {
+                    //update sudoku in local
+                    challenges.put(_game_name, sudokuChallenge.getSudoku().getMatrixUnsolved());
+
                     //update sudoku in DHT
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
 
@@ -166,9 +170,9 @@ public class SudokuGameImpl implements SudokuGame {
                         }
                     //Checks if the game is finished
                     if (sudokuChallenge.end_game()) {
-                        //inviare msg di vittoria a tutti <- da implementare
+                        victoryMsg(sudokuChallenge);
+                        return 2;
                     }
-
                     return 1;
 
                 } else if (sudokuChallenge.number_already_insert(_number, _i, _j)) { //Checks if the number has already been entered
@@ -189,7 +193,6 @@ public class SudokuGameImpl implements SudokuGame {
                             u.decreaseScore(1);
                             usersInGame.put(peerAddress, u);
                         }
-
                     return -1;
                 }
             }
@@ -221,8 +224,46 @@ public class SudokuGameImpl implements SudokuGame {
      */
     public void victoryMsg(SudokuChallenge sudokuChallenge) {
 
+        int max_score = 0;
+        int count_score = 0;
+        String win = "";
 
+        //Found max score
+        for(PeerAddress peerAddress : usersInGame.keySet()){
+            User u = usersInGame.get(peerAddress);
+            int score_u = u.getScore();
+            if(score_u > max_score)
+                max_score = score_u;
+        }
 
+        //Count the number of users with the max score
+        for(PeerAddress peerAddress : usersInGame.keySet()){
+            User u = usersInGame.get(peerAddress);
+            int score_u = u.getScore();
+            if(score_u == max_score)
+                count_score++;
+        }
+
+        //send msg
+        if(count_score == 1){
+            for(PeerAddress peerAddress : usersInGame.keySet()){
+                User u = usersInGame.get(peerAddress);
+                int score_u = u.getScore();
+                if(score_u == max_score)
+                    win += "The user " + u.getNickname() + " with the score " + u.getScore() + " won";
+            }
+            sendMessage(win, sudokuChallenge);
+        }else{
+            win += "The users ";
+            for(PeerAddress peerAddress : usersInGame.keySet()){
+                User u = usersInGame.get(peerAddress);
+                int score_u = u.getScore();
+                if(score_u == max_score)
+                    win += u.getNickname() + ",";
+            }
+            win += " withe the score " + max_score + " won";
+            sendMessage(win, sudokuChallenge);
+        }
     }
 
     /**

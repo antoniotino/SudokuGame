@@ -1,16 +1,14 @@
 package Starter;
 
-import GraphicUserInterface.SudokuGUI;
 import Sudoku.SudokuGameImpl;
 import User.User;
 import Terminal.MessageListenerTerminal;
 import Terminal.TerminalGrafic;
+import GraphicUserInterface.SudokuGUI;
 
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
-
-import java.util.Scanner;
 
 public class StartGame {
 
@@ -31,19 +29,19 @@ public class StartGame {
 
         terminal.printf("Choose the graphic quality:\t1) Terminal \t 2) GUI : ");
         int choose = textIO.newIntInputReader().withMaxVal(2).withMinVal(1).read();
-        if(choose == 1){
+        if (choose == 1) {
             terminal.resetLine();
             terminal.abort();
             SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
             peer.addUser(user);
             TerminalGrafic terminalGrafic = new TerminalGrafic(peer, peerID, user);
             terminalGrafic.startTerminal();
-        }else if(choose==2){
+        } else{
             terminal.resetLine();
             terminal.abort();
             SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
             peer.addUser(user);
-            SudokuGUI sudokuGui= new SudokuGUI(peer, peerID, user);
+            SudokuGUI sudokuGui = new SudokuGUI(peer, peerID, user);
             sudokuGui.createGraphicInterface();
         }
     }
