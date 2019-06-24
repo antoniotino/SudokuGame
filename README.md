@@ -50,7 +50,11 @@ Project under construction
 ## Compile & Execute in local environment
 * You could use:
     * Eclipse, Intellij or any other IDE you like
+        * Steps:
+            * ...
     * Terminal (PowerShell/CMD on Windows or BASH on Linux-based system)
+        * Commands:
+            * ...
 * Other information will be added soon...
 
 ## Build in a Docker container

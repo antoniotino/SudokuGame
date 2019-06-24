@@ -1,5 +1,6 @@
 package Starter;
 
+import GraphicUserInterface.MessageListenerGUI;
 import Sudoku.SudokuGameImpl;
 import User.User;
 import Terminal.MessageListenerTerminal;
@@ -39,7 +40,7 @@ public class StartGame {
         } else{
             terminal.resetLine();
             terminal.abort();
-            SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
+            SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerGUI(peerID));
             peer.addUser(user);
             SudokuGUI sudokuGui = new SudokuGUI(peer, peerID, user);
             sudokuGui.createGraphicInterface();
