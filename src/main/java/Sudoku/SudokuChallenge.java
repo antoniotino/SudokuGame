@@ -73,7 +73,7 @@ public class SudokuChallenge implements Serializable {
 
         for(int rows=0; rows<9; rows++)
             for(int columns=0; columns<9; columns++)
-                if(unsolved[rows][columns] != solved[rows][columns])
+                if (!(unsolved[rows][columns].equals(solved[rows][columns])))
                     return false;
 
         return true;

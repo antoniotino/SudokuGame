@@ -8,6 +8,7 @@ import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class TerminalGrafic {
 
@@ -16,6 +17,7 @@ public class TerminalGrafic {
     private int peerID;
     private String join_game;
     private boolean join;
+    private boolean victory;
 
     public TerminalGrafic(SudokuGameImpl peer, int peerID, User user) {
         this.peer = peer;
@@ -23,7 +25,7 @@ public class TerminalGrafic {
         this.user = user;
     }
 
-    public void startTerminal() {
+    public void startTerminal() throws InterruptedException {
         TextIO textIO = TextIoFactory.getTextIO();
         TextTerminal terminal = textIO.getTextTerminal();
 
@@ -90,15 +92,22 @@ public class TerminalGrafic {
                     if(join_game == null)
                         terminal.printf("\nYou need to join a game\n");
                     else{
-                       int ele = textIO.newIntInputReader().read("Insert a number: ");
-                       int row = textIO.newIntInputReader().read("Row: ");
-                       int column = textIO.newIntInputReader().read("Column: ");
+                       int ele = textIO.newIntInputReader().withMaxVal(9).withMinVal(1).read("Insert a number: ");
+                       int row = textIO.newIntInputReader().withMaxVal(9).withMinVal(1).read("Row: ");
+                       row -= 1;
+                       int column = textIO.newIntInputReader().withMaxVal(9).withMinVal(1).read("Column: ");
+                       column -=1;
                        int result = peer.placeNumber(join_game, row, column, ele);
                        if(result == 1)
                            terminal.printf("\n\nNumber correct! \n\n");
                        else if(result == 0)
                            terminal.printf("\n\nNumber already insert!\n\n");
-                       else
+                       else if(result ==2){
+                           terminal.printf("\n\nEnd Game...Now exit!\n\n");
+                           TimeUnit.SECONDS.sleep(10);
+                           peer.leaveNetwork(user.getNickname(), join_game, join);
+                           System.exit(0);
+                       }else
                            terminal.printf("\n\nIncorrect number! \n\n");
                     }
                     break;
