@@ -39,7 +39,7 @@ Each user can place a number of the sudoku game, if it is not already placed tak
     * This method allows you to set the difficulty of sudoku
 * HashMap<String, String> active_room()
     * This method allows to view the active rooms (matches in progress) 
-* nome
+* boolean getHelp(String _game_name, int row, int column)
     * This method allows you to help the user (max 3)     
 * Other features will be added soon...
 

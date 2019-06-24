@@ -17,7 +17,7 @@ public class TerminalGrafic {
     private int peerID;
     private String join_game;
     private boolean join;
-    private boolean victory;
+    private int count_help = 3;
 
     public TerminalGrafic(SudokuGameImpl peer, int peerID, User user) {
         this.peer = peer;
@@ -33,7 +33,7 @@ public class TerminalGrafic {
             infoUser(user, peerID, terminal);
             printMenu(terminal);
 
-            int option = textIO.newIntInputReader().withMaxVal(6).withMinVal(1).read("\nOption");
+            int option = textIO.newIntInputReader().withMaxVal(7).withMinVal(1).read("\nOption");
             switch (option) {
                 case 1:
                     terminal.printf("Insert the name's game: ");
@@ -112,6 +112,25 @@ public class TerminalGrafic {
                     }
                     break;
                 case 6:
+                    if(join_game == null)
+                        terminal.printf("\nYou need to join a game\n");
+                    else{
+                        if(count_help == 0)
+                            terminal.printf("\n\nThe number of suggestions is over \n\n");
+                        else{
+                            int row = textIO.newIntInputReader().withMaxVal(9).withMinVal(1).read("Row: ");
+                            row -= 1;
+                            int column = textIO.newIntInputReader().withMaxVal(9).withMinVal(1).read("Column: ");
+                            column -=1;
+                            if(peer.getHelp(join_game, row, column)){
+                                terminal.printf("\n\nok! \n\n");
+                                count_help--;
+                            }else
+                                terminal.printf("\n\nNumber already insert in this position! \n\n");
+                        }
+                    }
+                    break;
+                case 7:
                     terminal.printf("\nAre you sure to leave the network?\n");
                     boolean exit = textIO.newBooleanInputReader().withDefaultValue(false).read("exit?");
                     if (exit) {
@@ -135,7 +154,8 @@ public class TerminalGrafic {
         terminal.printf("\n3 - Join in a game\n");
         terminal.printf("\n4 - Get sudoku\n");
         terminal.printf("\n5 - Place a number \n");
-        terminal.printf("\n6 - EXIT\n");
+        terminal.printf("\n6 - Help (max 3) \n");
+        terminal.printf("\n7 - EXIT\n");
     }
 
     private void printSudoku(Integer[][] sudoku, String _game_name, TextTerminal terminal) {

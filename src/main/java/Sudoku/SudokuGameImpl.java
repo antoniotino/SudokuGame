@@ -349,7 +349,36 @@ public class SudokuGameImpl implements SudokuGame {
     /**
      * Allows you to help the user (max 3)
      */
-    public void getHelp(String _game_name, ){
+    public boolean getHelp(String _game_name, int row, int column){
 
+        try {
+            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+            futureGet.awaitUninterruptibly();
+
+            if (futureGet.isSuccess()) {
+
+                //I take the sudoku relative to _game_name
+                SudokuChallenge sudokuChallenge;
+                sudokuChallenge = (SudokuChallenge) futureGet.dataMap().values().iterator().next().object();
+
+                int help = sudokuChallenge.help(row, column);
+                if(help == 0)
+                    return false;
+
+                //-1 is removed from the user to balance the +1 of the method placeNumber
+                for (PeerAddress peerAddress : usersInGame.keySet())
+                    if (peerAddress.equals(peer.peerAddress())) {
+                        User u = usersInGame.get(peerAddress);
+                        u.decreaseScore(1);
+                        usersInGame.put(peerAddress, u);
+                    }
+
+                placeNumber(_game_name, row, column, help);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

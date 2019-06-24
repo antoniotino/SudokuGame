@@ -91,6 +91,19 @@ public class SudokuChallenge implements Serializable {
     }
 
     /**
+     * Method that returns the suggestion
+     */
+    public int help(int row, int column){
+        int n = 0;
+        Integer[][] unsolved = sudoku.getMatrixUnsolved();
+        Integer[][] solved = sudoku.getMatrixSolved();
+        if(unsolved[row][column] == 0)
+            n += solved[row][column];
+
+        return n;
+    }
+
+    /**
      * Getter Methods
      */
     public Sudoku getSudoku() {
