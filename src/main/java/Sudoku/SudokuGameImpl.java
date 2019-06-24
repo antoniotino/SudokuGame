@@ -345,4 +345,11 @@ public class SudokuGameImpl implements SudokuGame {
 
         return null;
     }
+
+    /**
+     * Allows you to help the user (max 3)
+     */
+    public void getHelp(String _game_name, ){
+
+    }
 }
