@@ -52,6 +52,7 @@ public class SudokuGUI {
                             focusedTextBox = (JTextField) e.getSource();
                         }
                     }
+
                     public void focusGained(FocusEvent e) {
                         printSudoku(peer.getSudoku(join_game), join_game, textField);
                     }
