@@ -4,7 +4,11 @@
 This project was developed for the "Architetture Distribuite per il Cloud" course. <br>
 University of Salerno
 
-#### Team 
+##### Referents of the course
+* Prof. Alberto Negro (Foundamentals and Algorithms for Distributed Systems)
+* Prof. Gennaro Cordasco and Ph.D. Carmine Spagnuolo (Peer-to-Peer Networks) 
+
+##### Team 
 * Team name: Jack&Tino
 * Team leader: Giacomo Astarita
     * GitHub: giacomoastarita
@@ -15,6 +19,7 @@ University of Salerno
 * Java SE (version 8)
 * Apache Maven
 * JSON
+* JUnit
 * TomP2P
 * Docker
 * Other technologies will be added soon...
@@ -43,11 +48,18 @@ Each user can place a number of the sudoku game, if it is not already placed tak
     * This method allows you to help the user (max 3)     
 * Other features will be added soon...
 
+## Graphical User Interface
+* Terminal Interface
+    ![Img]()
+* GUI
+    ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
+   
 ## Solution 
 Project under construction
 
-## Test case 
-Project under construction
+## Test Suites
+* Framework used: JUnit 
+* Other information will be added soon...
 
 ## Compile & Execute in local environment
 * You could use:
