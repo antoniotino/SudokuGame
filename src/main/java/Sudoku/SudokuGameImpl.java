@@ -263,7 +263,7 @@ public class SudokuGameImpl implements SudokuGame {
                 if(score_u == max_score)
                     win += u.getNickname() + ",";
             }
-            win += " withe the score " + max_score + " won";
+            win += " with the score " + max_score + " won";
             sendMessage(win, sudokuChallenge);
         }
     }
