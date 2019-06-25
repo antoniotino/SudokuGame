@@ -50,7 +50,7 @@ Each user can place a number of the sudoku game, if it is not already placed tak
 
 ## Graphical User Interface
 * Terminal Interface
-    * ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
+    ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
 * GUI
     * ![Img]()   
 ## Solution 
