@@ -15,6 +15,7 @@ University of Salerno
 * Java SE (version 8)
 * Apache Maven
 * JSON
+* JUnit
 * TomP2P
 * Docker
 * Other technologies will be added soon...
@@ -43,11 +44,17 @@ Each user can place a number of the sudoku game, if it is not already placed tak
     * This method allows you to help the user (max 3)     
 * Other features will be added soon...
 
+## Graphical User Interface
+* Terminal Interface
+    * photo...
+* GUI
+    * photo...    
 ## Solution 
 Project under construction
 
-## Test case 
-Project under construction
+## Test Suites
+* Framework used: JUnit 
+* Other information will be added soon...
 
 ## Compile & Execute in local environment
 * You could use:
