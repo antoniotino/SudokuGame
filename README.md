@@ -4,7 +4,11 @@
 This project was developed for the "Architetture Distribuite per il Cloud" course. <br>
 University of Salerno
 
-#### Team 
+##### Referents of the course
+* Prof. Alberto Negro (Foundamentals and Algorithms for Distributed Systems)
+* Prof. Gennaro Cordasco and Ph.D. Carmine Spagnuolo (Peer-to-Peer Networks) 
+
+##### Team 
 * Team name: Jack&Tino
 * Team leader: Giacomo Astarita
     * GitHub: giacomoastarita
@@ -46,9 +50,9 @@ Each user can place a number of the sudoku game, if it is not already placed tak
 
 ## Graphical User Interface
 * Terminal Interface
-    * photo...
+    * ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
 * GUI
-    * photo...    
+    * ![Img]()   
 ## Solution 
 Project under construction
 
