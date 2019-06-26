@@ -81,13 +81,25 @@ The methods tested are all those of the SudokuGameImpl class which allows you to
 * active_room
 * getHelp
 
+Number of peers: 4 <br>
 Tests passed: 13 of 13 test
  
-###### Test 2 (da valutare)      
+###### Test 2      
 Test without JUnit 4 <br>
 Class: TestGame.java <br>
 Path: \src\test\java <br>
+The methods tested are all those of the SudokuGameImpl class which allows you to join the system and play with other users.They are:
+* generateNewSudoku
+* join
+* getSudoku
+* placeNumber
+* addUser
+* leaveNetwork
+* choose_difficulty
+* active_room
+* getHelp
 
+Number of peers: 4
 
 ## Compile & Execute in local environment
 * You could use:

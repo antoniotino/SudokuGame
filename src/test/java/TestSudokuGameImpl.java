@@ -55,7 +55,7 @@ public class TestSudokuGameImpl extends TestCase {
     }
 
     /**
-     * Test for method choose_difficulty
+     * Test for method generateNewSudoku
      */
     @Test
     public void test_generateNewSudoku() throws Exception {
