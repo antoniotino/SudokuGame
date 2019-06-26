@@ -93,7 +93,7 @@ public class SudokuGameImpl implements SudokuGame {
             e.printStackTrace();
         }
 
-        return null;
+        return empty;
     }
 
     public boolean join(String _game_name, String _nickname) {
@@ -129,6 +129,7 @@ public class SudokuGameImpl implements SudokuGame {
             futureGet.awaitUninterruptibly();
 
             if (futureGet.isSuccess()) {
+                if(futureGet.isEmpty()) return empty;
 
                 //I take the sudoku relative to _game_name
                 SudokuChallenge sudokuChallenge;
@@ -140,7 +141,7 @@ public class SudokuGameImpl implements SudokuGame {
             e.printStackTrace();
         }
 
-        return null;
+        return empty;
     }
 
     public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
@@ -224,7 +225,7 @@ public class SudokuGameImpl implements SudokuGame {
     /**
      * Method that elects the winner / winners of the game
      */
-    public void victoryMsg(SudokuChallenge sudokuChallenge) {
+    private void victoryMsg(SudokuChallenge sudokuChallenge) {
 
         int max_score = 0;
         int count_score = 0;
@@ -358,6 +359,7 @@ public class SudokuGameImpl implements SudokuGame {
             futureGet.awaitUninterruptibly();
 
             if (futureGet.isSuccess()) {
+                if(futureGet.isEmpty()) return false;
 
                 //I take the sudoku relative to _game_name
                 SudokuChallenge sudokuChallenge;
@@ -376,6 +378,7 @@ public class SudokuGameImpl implements SudokuGame {
                     }
 
                 placeNumber(_game_name, row, column, help);
+                return true;
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -22,7 +22,6 @@ University of Salerno
 * JUnit
 * TomP2P
 * Docker
-* Other technologies will be added soon...
 
 ## Problem Statement
 Design and development of the Sudoku Game on a P2P network. <br>
@@ -46,20 +45,49 @@ Each user can place a number of the sudoku game, if it is not already placed tak
     * This method allows to view the active rooms (matches in progress) 
 * boolean getHelp(String _game_name, int row, int column)
     * This method allows you to help the user (max 3)     
-* Other features will be added soon...
-
+    
+## Other Methods    
+* public void addUser(User user)
+    * This method allows adding the user to the system (Sudoku game)
+* private void victoryMsg(SudokuChallenge sudokuChallenge)
+    * This method calculates the winner / winners and generates a message to alert others  
+* private void sendMessage(String message, SudokuChallenge sudokuChallenge)
+    * This method allows you to send a message to other peers
+    
 ## Graphical User Interface
 * Terminal Interface
-    ![Img]()
+    ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/TerminalInterface.png)
+
 * GUI
     ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
    
 ## Solution 
 Project under construction
 
-## Test Suites
-* Framework used: JUnit 
-* Other information will be added soon...
+## Test
+#### JUnit Test
+###### Test 1
+Framework used: JUnit 4 <br>
+Class: TestSudokuGameImpl.java <br>
+Path: \src\test\java <br> <br>
+The methods tested are all those of the SudokuGameImpl class which allows you to join the system and play with other users.They are:
+* generateNewSudoku
+* join
+* getSudoku
+* placeNumber
+* addUser
+* leaveNetwork
+* choose_difficulty
+* active_room
+* getHelp
+
+Tests passed: 13 of 13 test
+ 
+###### Test 2 (da valutare)      
+Test without JUnit 4 <br>
+Class: TestGame.java <br>
+Path: \src\test\java <br>
+
 
 ## Compile & Execute in local environment
 * You could use:
