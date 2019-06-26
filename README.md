@@ -55,11 +55,11 @@ Each user can place a number of the sudoku game, if it is not already placed tak
     * This method allows you to send a message to other peers
     
 ## Graphical User Interface
-* Terminal Interface
-    ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/TerminalInterface.png)
+* Terminal Interface <br>
+![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/TerminalInterface.png)
 
-* GUI
-    ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
+* GUI <br>
+![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
    
 ## Solution 
 Project under construction
