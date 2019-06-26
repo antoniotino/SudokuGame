@@ -66,7 +66,6 @@ Project under construction
 
 ## Test
 #### JUnit Test
-###### Test 1
 Framework used: JUnit 4 <br>
 Class: TestSudokuGameImpl.java <br>
 Path: \src\test\java <br> <br>
@@ -82,10 +81,9 @@ The methods tested are all those of the SudokuGameImpl class which allows you to
 * getHelp
 
 Number of peers: 4 <br>
-Tests passed: 13 of 13 test
+Tests passed: 15 of 15 test
  
-###### Test 2      
-Test without JUnit 4 <br>
+#### Test  without JUnit 
 Class: TestGame.java <br>
 Path: \src\test\java <br>
 The methods tested are all those of the SudokuGameImpl class which allows you to join the system and play with other users.They are:

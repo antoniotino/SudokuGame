@@ -2,6 +2,7 @@ import GraphicUserInterface.MessageListenerGUI;
 import Sudoku.SudokuGameImpl;
 import User.User;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class TestGame {
@@ -47,6 +48,11 @@ public class TestGame {
         Integer[][] sudoku_hard = peer3.generateNewSudoku("SudokuHard");
         if (sudoku_hard.length != 0)
             logg.info("Sudoku created correctly!");
+
+        //Show active sudokus
+        HashMap<String, String> room_active = peer3.active_room();
+        if(room_active.size() > 0)
+            logg.info("There are " + (room_active.size()+1)+" active sudokus!");
 
         //Join correct in sudoku SudokuEasy
         if (peer0.join("SudokuEasy", "Antonio"))

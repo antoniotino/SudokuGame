@@ -5,6 +5,8 @@ import User.User;
 import junit.framework.TestCase;
 import org.junit.*;
 
+import java.util.HashMap;
+
 public class TestSudokuGameImpl extends TestCase {
 
     @SuppressWarnings("unused")
@@ -68,6 +70,28 @@ public class TestSudokuGameImpl extends TestCase {
         peer2.choose_difficulty("easy");
         Integer[][] sudokuEasy2 = peer2.generateNewSudoku("SudokuEasy");
         assertFalse(sudokuEasy2.length == 0);
+    }
+
+    /**
+     * Test for method active_room
+     */
+    @Test
+    public void test_activeRoom1() throws Exception {
+        start_system();
+
+        peer0.choose_difficulty("easy");
+        peer0.generateNewSudoku("SudokuEasy");
+
+        HashMap<String, String> room_active = peer0.active_room();
+        assertTrue(room_active.size() > 0);
+    }
+
+    @Test
+    public void test_activeRoom2() throws Exception {
+        start_system();
+
+        HashMap<String, String> room_active = peer0.active_room();
+        assertFalse(room_active.size() > 0);
     }
 
     /**

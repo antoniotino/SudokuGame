@@ -332,11 +332,15 @@ public class SudokuGameImpl implements SudokuGame {
 
     public HashMap<String, String> active_room() {
 
+        HashMap<String, String> emptyHash = new HashMap<String, String>();
+        
         try {
             FutureGet room = _dht.get(Number160.createHash("room_active")).start();
             room.awaitUninterruptibly();
 
             if (room.isSuccess()) {
+                if(room.isEmpty()) return emptyHash;
+
                 HashMap<String, String> r;
                 r = (HashMap<String, String>) room.dataMap().values().iterator().next().object();
 
@@ -346,7 +350,7 @@ public class SudokuGameImpl implements SudokuGame {
             e.printStackTrace();
         }
 
-        return null;
+        return emptyHash;
     }
 
     /**
