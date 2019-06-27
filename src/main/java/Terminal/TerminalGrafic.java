@@ -27,6 +27,7 @@ public class TerminalGrafic {
         while (true) {
             infoUser(user, peerID);
             printMenu();
+            HashMap<String, Integer> userScore= peer.score_peer();
             Scanner scanner= new Scanner(System.in);
             System.out.println("\nOption");
             int option = scanner.nextInt();
@@ -86,7 +87,7 @@ public class TerminalGrafic {
                         if(join_game == null || !join)
                             System.out.printf("\nYou need to join a game\n");
                         else
-                            printSudoku(peer.getSudoku(join_game), join_game);
+                            printSudoku(peer.getSudoku(join_game), join_game,userScore);
                         break;
                     case 5:
                         if(join_game == null)
@@ -114,6 +115,7 @@ public class TerminalGrafic {
                             else if(result == 0)
                                 System.out.printf("\n\nNumber already insert!\n\n");
                             else if(result ==2){
+                                System.out.println(getVictory(userScore));
                                 System.out.printf("\n\nEnd Game...Now exit!\n\n");
                                 TimeUnit.SECONDS.sleep(10);
                                 peer.leaveNetwork(user.getNickname(), join_game, join);
@@ -140,14 +142,22 @@ public class TerminalGrafic {
                                 int column = scanner.nextInt();
                                 while(column < 1 || column >9){
                                     System.out.println("Number row not column \nColumn: ");
-                                    row = scanner.nextInt();
+                                    column = scanner.nextInt();
                                 }
                                 column -=1;
-                                if(peer.getHelp(join_game, row, column)){
+                                if(peer.getHelp(join_game, row, column)==1){
                                     System.out.printf("\n\nok! \n\n");
                                     count_help--;
-                                }else
+                                }else if( peer.getHelp(join_game, row, column)==2){
+                                    System.out.println(getVictory(userScore));
+                                    System.out.printf("\n\nEnd Game...Now exit!\n\n");
+                                    TimeUnit.SECONDS.sleep(10);
+                                    peer.leaveNetwork(user.getNickname(), join_game, join);
+                                    System.exit(0);
+                                }
+                                else {
                                     System.out.printf("\n\nNumber already insert in this position! \n\n");
+                                }
                             }
                         }
                         break;
@@ -155,7 +165,7 @@ public class TerminalGrafic {
                         System.out.println("\nAre you sure to leave the network?\n 1) Yes \t2) No");
                         int exit = scanner.nextInt();
                         if (exit==1) {
-                            if(peer.leaveNetwork(user.getNickname(), join_game, join))
+                            if(peer.leaveNetwork(user.getNickname(), join_game, join)==1)
                                 System.exit(0);
                             System.out.printf("\nError in leaving the network!\n");
                         }
@@ -181,8 +191,9 @@ public class TerminalGrafic {
         System.out.printf("\n7 - EXIT\n");
     }
 
-    private void printSudoku(Integer[][] sudoku, String _game_name){
+    private void printSudoku(Integer[][] sudoku, String _game_name, HashMap<String, Integer> userScore) throws InterruptedException {
         int fin = 0;
+        int count= 0;
         System.out.printf("\n\nRoom: "+_game_name);
         System.out.println("\n    1   2   3   4   5   6   7   8   9    \n  ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");
         for (int row = 0; row < 9; row++) {
@@ -191,6 +202,7 @@ public class TerminalGrafic {
                     if (column == 0) {
                         if (sudoku[row][column] == 0){
                             System.out.print((row+1)+" ┃   │ ");
+                            count++;
                         }
                         else {
                             System.out.print((row + 1) + " ┃ " + "\u001B[1m" + sudoku[row][column] + "\u001B[0m │ ");
@@ -198,6 +210,7 @@ public class TerminalGrafic {
                     } else {
                         if (sudoku[row][column] == 0){
                             System.out.print("  │ ");
+                            count++;
                         }
                         else {
                             System.out.print("\u001B[1m" + sudoku[row][column] + "\u001B[0m │ ");
@@ -206,6 +219,7 @@ public class TerminalGrafic {
                 }else if(column == 2 || column ==5) {
                     if (sudoku[row][column] == 0){
                         System.out.print("  ┃ ");
+                        count++;
                     }
                     else {
                         System.out.print("\u001B[1m" + sudoku[row][column] + "\u001B[0m ┃ ");
@@ -214,6 +228,7 @@ public class TerminalGrafic {
                 else if (column == sudoku.length - 1) {
                     if (sudoku[row][column] == 0){
                         System.out.print("  ┃\n");
+                        count++;
                     }
                     else {
                         System.out.print("\u001B[1m" + sudoku[row][column] + "\u001B[0m ┃\n");
@@ -221,6 +236,7 @@ public class TerminalGrafic {
                 } else {
                     if (sudoku[row][column] == 0){
                         System.out.print("  │ ");
+                        count++;
                     }
                     else {
                         System.out.print("\u001B[1m" + sudoku[row][column] + "\u001B[0m │ ");
@@ -238,5 +254,25 @@ public class TerminalGrafic {
                 System.out.println("  ┣───┼───┼───┃───┼───┼───┃───┼───┼───┫");
             }
         }
+        if(count==0){
+            System.out.println(getVictory(userScore));
+            System.out.printf("\n\nEnd Game...Now exit!\n\n");
+            TimeUnit.SECONDS.sleep(10);
+            peer.leaveNetwork(user.getNickname(), join_game, join);
+            System.exit(0);
+        }
+    }
+
+    public String getVictory(HashMap<String, Integer> userScore){
+        int max_score=0;
+        String winner ="";
+        for(String str : userScore.keySet()){
+            if(userScore.get(str)> max_score){
+                max_score= userScore.get(str);
+                winner= str;
+            }
+        }
+        String message= "The user "+winner+" won the sudoku game with score of "+max_score;
+        return message;
     }
 }
