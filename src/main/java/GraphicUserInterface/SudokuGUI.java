@@ -164,9 +164,7 @@ public class SudokuGUI {
         buttonPanel.add(buttonView);
         buttonView.addActionListener(e -> {
             HashMap<String, String> room_active = peer.active_room();
-            if (room_active.size() == 0) {
-                JOptionPane.showMessageDialog(null, "There are no active sudoku", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
+            if (room_active.size() > 0) {
                 ArrayList<Object> possibleValues = new ArrayList<Object>();
                 for (String str : room_active.keySet()) {
                     possibleValues.add(str);
@@ -186,6 +184,8 @@ public class SudokuGUI {
                         JOptionPane.showMessageDialog(null, "Error in join to game", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
+            } else {
+                JOptionPane.showMessageDialog(null, "There are no active sudoku", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 

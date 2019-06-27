@@ -33,6 +33,12 @@ public class SudokuGameImpl implements SudokuGame {
     private HashMap<PeerAddress, User> usersInGame = new HashMap<PeerAddress, User>();
 
     /**
+     * A map that contains the active rooms
+     * Key: game name and Value: difficulty
+     */
+    private HashMap<String, String> room_active = new HashMap<String, String>();
+
+    /**
      * A map that contains the sudoku relative to game name
      * Key: game name and Value: Sudoku
      */
@@ -66,24 +72,28 @@ public class SudokuGameImpl implements SudokuGame {
     /* Default Feature */
     public Integer[][] generateNewSudoku(String _game_name) {
 
-        if(challenges.containsKey(_game_name))
-            return empty;
+        if (room_active.containsKey(_game_name)) return empty;
+
+        room_active.put(_game_name, difficulty);
 
         try {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
 
-            if (futureGet.isSuccess()) {
-                SudokuChallenge sudokuChallenge = new SudokuChallenge(_game_name, difficulty);
+            FutureGet room = _dht.get(Number160.MAX_VALUE.createHash("room_active")).start();
+            room.awaitUninterruptibly();
 
+            if (futureGet.isSuccess() && room.isSuccess()) { //tmp
+                SudokuChallenge sudokuChallenge = new SudokuChallenge(_game_name, difficulty);
                 _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuChallenge)).start().awaitUninterruptibly();
+                _dht.put(Number160.createHash("room_active")).data(new Data(room_active)).start().awaitUninterruptibly();
                 return sudokuChallenge.getSudoku().getMatrixUnsolved();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return empty;
+        return null;
     }
 
     public boolean join(String _game_name, String _nickname) {
@@ -251,7 +261,6 @@ public class SudokuGameImpl implements SudokuGame {
             win += " with the score " + max_score + " won";
             sendMessage(win, sudokuChallenge);
         }
-
     }
 
     /**
@@ -315,9 +324,23 @@ public class SudokuGameImpl implements SudokuGame {
      * Allows to view the active rooms
      */
 
-    public HashMap<String, String> active_room() { //tmp
+    public HashMap<String, String> active_room() {
 
-        return new HashMap<>();
+        try {
+            FutureGet room = _dht.get(Number160.createHash("room_active")).start();
+            room.awaitUninterruptibly();
+
+            if (room.isSuccess()) {
+                HashMap<String, String> r;
+                r = (HashMap<String, String>) room.dataMap().values().iterator().next().object();
+
+                return r;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     /**

@@ -1,6 +1,5 @@
 package Sudoku;
 
-import User.User;
 import net.tomp2p.peers.PeerAddress;
 import org.json.simple.parser.ParseException;
 
@@ -25,17 +24,11 @@ public class SudokuChallenge implements Serializable {
      */
     private HashMap<String, Integer> peerScore = new HashMap<String, Integer>();
 
-    /**
-     * A map that contains the active rooms
-     * Key: game name and Value: difficulty
-     */
-    private HashMap<String, String> room_active = new HashMap<String, String>();
 
     public SudokuChallenge(String _game_name, String difficulty) throws IOException, ParseException {
         this._game_name = _game_name;
         sudoku = new Sudoku(_game_name);
         sudoku.generate_sudoku(difficulty);
-        room_active.put(_game_name, difficulty);
     }
 
     /**
@@ -138,7 +131,4 @@ public class SudokuChallenge implements Serializable {
         return peerScore;
     }
 
-    public HashMap<String, String> getRoomActive(){
-        return room_active;
-    }
 }
