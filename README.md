@@ -27,6 +27,31 @@ University of Salerno
 Design and development of the Sudoku Game on a P2P network. <br>
 Each user can place a number of the sudoku game, if it is not already placed takes 1 point, if it is already placed and it is rights takes 0 point, in other case receive -1 point. The game is based on a 9 x 9 matrix. All users that are playing a match are automatically informed when a user increment its score, and when the match is over. The system allows the users to generate (automatically) a new Sudoku challenge identified by a name, join in a challenge using a nickname, get the integer matrix describing the Sudoku challenge, and place a solution number.
 
+## Solution 
+The solution for the Sudoku Game on a P2P network provides two different interfaces
+(Terminal or GUI) & has two Sudoku Tables for each level of difficulty (easy, medium and hard).
+The complete and incomplete Sudoku Tables are saved in two different JSONs. <br>
+Once the user joins the system, he'll have to chose with which graphic interface he wants to play,
+ and a unique nickname (that's not already taken by another user). After all of this, he'll find a
+menu with the following options:  
+* "Create a new Sudoku" which will ask to set a name and a difficulty.
+The generated Sudoku must have a different combination of name and difficulty from every other
+already generated Sudoku & will be put in a matrix (Integer [ ][ ]).
+* "Show active Sudoku" that will show every created Sudoku that's still active.
+* "Join in a game" allows the user to type the name of the Sudoku Match he wants to join.
+* "Get Sudoku" will show the Sudoku Table of the match he chose. This operation can be done
+at anytime.
+* "Place number" is where the user will specify the number he wants to put in and where he wants it
+to be placed (row and column). If the number is in the correct position the user will earn one point; if the number
+is not in the correct position he will lose one point; if the number is placed correctly but
+has already been placed by another user he will neither earn or lose points.
+* "Get help" will put the correct number in a given position (row and column). This operation
+can be done just three times per Match.
+* "Exit" allows the user to leave the Match and the system.
+
+Once the game's over, a message that announces the winner, or the winners (in case of draw),
+ will be shown.
+ 
 ## Default Features
 * Integer[][] generateNewSudoku(String _game_name)
     * This method allows to generate a new sudoku match
@@ -49,8 +74,6 @@ Each user can place a number of the sudoku game, if it is not already placed tak
 ## Other Methods    
 * public void addUser(User user)
     * This method allows adding the user to the system (Sudoku game)
-* private void victoryMsg(SudokuChallenge sudokuChallenge)
-    * This method calculates the winner / winners and generates a message to alert others  
 * private void sendMessage(String message, SudokuChallenge sudokuChallenge)
     * This method allows you to send a message to other peers
     
@@ -61,9 +84,6 @@ Each user can place a number of the sudoku game, if it is not already placed tak
 * GUI <br>
 ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
    
-## Solution 
-Project under construction
-
 ## Test
 #### JUnit Test
 Framework used: JUnit 4 <br>
@@ -142,10 +162,12 @@ Number of peers: 4
 * You could use:
     * Eclipse, Intellij or any other IDE you like
         * Steps:
-            * ...
+            * Run - Edit Configurations - set "Program arguments" 0 (Master)
+            * Run - Edit Configurations - set "Program arguments" 1 (First Peer)
     * Terminal (PowerShell/CMD on Windows or BASH on Linux-based system)
         * Commands:
-            * ...
+            * java -jar SudokuGame.jar 0 (Master)
+            * java -jar SudokuGame.jar 1 (First Peer)
 * Other information will be added soon...
 
 ## Build in a Docker container
