@@ -46,6 +46,7 @@ public class StartGame {
         } else{
             SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerGUI(peerID));
             HashMap<PeerAddress, User> nicknameHash= peer.duplicateNickname();
+            HashMap<String, Integer> score= peer.score_peer();
             ArrayList<String> nicknameUser= new ArrayList<String>();
             for(PeerAddress str: nicknameHash.keySet())
                 nicknameUser.add(nicknameHash.get(str).getNickname());
@@ -55,6 +56,8 @@ public class StartGame {
                 nickname = scanner.next();
                 user = new User(nickname);
             }while(nicknameUser.contains(nickname));
+            peer.addUser(user);
+            score.put(user.getNickname(), user.getScore());
             SudokuGUI sudokuGui = new SudokuGUI(peer, peerID, user);
             sudokuGui.createGraphicInterface();
         }

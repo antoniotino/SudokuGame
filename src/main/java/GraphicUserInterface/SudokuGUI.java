@@ -31,6 +31,7 @@ public class SudokuGUI {
     private JTextField focusedTextBox;
     private int max;
     private JScrollPane listScroller;
+    private HashMap<String, Integer> userScore= new HashMap<String, Integer>();
 
     // constructor for blank SudokuTable. adds empty text fields to gridpanel
     public SudokuGUI(SudokuGameImpl peer, int peerID, User user) {
@@ -45,54 +46,28 @@ public class SudokuGUI {
                 textField[row][column].setHorizontalAlignment(0);
                 textField[row][column].setEnabled(false);
                 textField[row][column].addActionListener(e -> ((JTextField) e.getSource()).setBackground(new Color(229, 247, 255)));
-                textField[row][column].addFocusListener(new FocusListener() {
-                    public void focusLost(FocusEvent e) {
-                        printSudoku(peer.getSudoku(join_game), join_game, textField);
-                        if (e.getSource() instanceof JTextField) {
-                            focusedTextBox = (JTextField) e.getSource();
-                        }
-                    }
-
-                    public void focusGained(FocusEvent e) {
-                        printSudoku(peer.getSudoku(join_game), join_game, textField);
-                    }
-                });
-                int finalRow = row;
-                int finalColumn = column;
-                textField[row][column].addActionListener(actionEvent -> {
-                    value = peer.placeNumber(join_game, finalRow, finalColumn, Integer.parseInt(((JTextField) actionEvent.getSource()).getText()));
-                    if (value == -1) {
-
-                        JOptionPane.showMessageDialog(frame, "Number not valid for cell");
-                    } else if (value == 1) {
-                        JOptionPane.showMessageDialog(frame, "Number valid for cell");
-                        printSudoku(peer.getSudoku(join_game), join_game, textField);
-                    } else if (value == 2) {
-                        String fine = "You finish, your score is:" + user.getScore();
-                        printSudoku(peer.getSudoku(join_game), join_game, textField);
-                        JOptionPane.showConfirmDialog(null, fine, "End Game", JOptionPane.DEFAULT_OPTION);
-                        peer.leaveNetwork(user.getNickname(), join_game, join);
-                        System.exit(0);
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Number already in cell");
-                    }
-
-                });
                 gridPanel.add(textField[row][column]);
             }
         }
-
     }
 
     public void createGraphicInterface() {
-
         UIManager.put("OptionPane.cancelButtonText", "Cancel");
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.okButtonText", "Agree");
         UIManager.put("OptionPane.yesButtonText", "Yes");
+
+        TimerTask scoreTask = new TimerTask() {
+            @Override
+            public void run() {
+                    userScore=peer.score_peer();
+            }
+        };
+        java.util.Timer timerScore = new java.util.Timer();
+        timerScore.schedule(scoreTask, 500, 500);
+
         JPanel mainPanel = new JPanel(new GridBagLayout()); //create main panel
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-
         //JPanel rightPanel = new JPanel(new GridBagLayout());
         JPanel infoPanel = new JPanel((new GridBagLayout()));
         gridBagConstraints.weighty = 1;
@@ -122,36 +97,45 @@ public class SudokuGUI {
         gridBagConstraints.ipady = 20;
         buttonPanel.add(buttonCreate);
         buttonCreate.addActionListener(e -> {
-            String game_name = JOptionPane.showInputDialog(
-                    frame,
-                    "Insert the name of new Sudoku:",
-                    "Create Sudoku",
-                    JOptionPane.PLAIN_MESSAGE);
-
-            String _game_name = game_name;
-            if (_game_name != null && _game_name.length() > 0) {
-                Object[] options = {"EASY", "MEDIUM", "HARD"};
-                String difficulty = "";
-                int choose = JOptionPane.showOptionDialog(null, "Choose your difficulty and click OK to continue", "Choose a difficulty",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.YES_NO_CANCEL_OPTION,
-                        null, options, options[0]);
-                if (choose == 0) {
-                    difficulty = "easy";
-                } else if (choose == 1) {
-                    difficulty = "medium";
-                } else if (choose == 2) {
-                    difficulty = "hard";
-                } else {
-                    System.out.println("Error into choose!");
-                }
-                peer.choose_difficulty(difficulty);
-                Integer[][] matrix = peer.generateNewSudoku(_game_name);
-                if (matrix.length == 0)
-                    JOptionPane.showMessageDialog(null, "There is already a room with this name", "Error", JOptionPane.ERROR_MESSAGE);
-                else
-                    JOptionPane.showMessageDialog(null, "Created a room with this name", "Success", JOptionPane.INFORMATION_MESSAGE);
+            String _game_name="";
+            HashMap<String, String> roomExisting = peer.active_room();
+            ArrayList<String> roomName= new ArrayList<String>();
+            for(String str: roomExisting.keySet()) {
+                roomName.add(str);
             }
-
+            do {
+                String game_name = JOptionPane.showInputDialog(
+                        frame,
+                        "Insert the name of new Sudoku:",
+                        "Create Sudoku",
+                        JOptionPane.PLAIN_MESSAGE);
+                _game_name= game_name;
+            }while(roomName.contains(_game_name));
+                if (_game_name != null && _game_name.length() > 0) {
+                    Object[] options = {"EASY", "MEDIUM", "HARD"};
+                    String difficulty = "";
+                    int choose = JOptionPane.showOptionDialog(null, "Choose your difficulty and click OK to continue", "Choose a difficulty",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.YES_NO_CANCEL_OPTION,
+                            null, options, options[0]);
+                    if (choose == 0) {
+                        difficulty = "easy";
+                    } else if (choose == 1) {
+                        difficulty = "medium";
+                    } else if (choose == 2) {
+                        difficulty = "hard";
+                    } else {
+                        System.out.println("Error into choose!");
+                    }
+                    peer.choose_difficulty(difficulty);
+                    Integer[][] matrix = peer.generateNewSudoku(_game_name);
+                    if (matrix.length == 0)
+                        JOptionPane.showMessageDialog(null, "There is already a room with this name", "Error", JOptionPane.ERROR_MESSAGE);
+                    else
+                        JOptionPane.showMessageDialog(null, "Created a room with this name", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "There is already a room with this name", "Error", JOptionPane.ERROR_MESSAGE);
+                }
         });
 
         JButton buttonView = new JButton("Sudoku actually active");
@@ -211,6 +195,20 @@ public class SudokuGUI {
                 JOptionPane.showMessageDialog(null, "Error in join to game", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        TimerTask tasknew = new TimerTask() {
+            @Override
+            public void run() {
+                listMessages.removeAll();
+                for (Object message : peer.getMessages()) {
+                    listMessages.add(message.toString());
+                }
+            }
+        };
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(tasknew, 3000, 3000);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        listScroller = new JScrollPane(listMessages);
 
         JButton buttonSudoku = new JButton("Get a Sudoku");
         buttonSudoku.setFont(new Font("Helvetica", Font.BOLD, 15));
@@ -220,7 +218,6 @@ public class SudokuGUI {
         gridBagConstraints.ipady = 20;
         buttonPanel.add(buttonSudoku);
         buttonSudoku.addActionListener(e -> {
-
             if (join_game == null || !join) {
                 JOptionPane.showMessageDialog(frame, "You need to join a game", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -251,7 +248,6 @@ public class SudokuGUI {
                                 labelTime.setText("0" + hour + ":0" + minute + ":" + second);
                             else
                                 labelTime.setText(hour + ":" + minute + ":" + second);
-
                             labelInfo.setText("PeerID: " + peerID + "  Nickname: " + user.getNickname() + "  Score: " + user.getScore() + "\n Game: " + join_game);
                         } catch (Exception exception) {
 
@@ -260,7 +256,7 @@ public class SudokuGUI {
                 });
                 t.start();
                 sudoku = peer.getSudoku(join_game);
-                printSudoku(sudoku, join_game, textField);
+                printSudoku(sudoku, join_game, textField, userScore);
                 buttonSudoku.setEnabled(false);
             }
         });
@@ -292,7 +288,7 @@ public class SudokuGUI {
                 for (int column = 0; column < 9; column++) {
                     if (focusedTextBox == textField[row][column] && count > 0 && focusedTextBox.getText().equals("")) {
                         peer.getHelp(join_game, row, column);
-                        printSudoku(peer.getSudoku(join_game), join_game, textField);
+                        printSudoku(peer.getSudoku(join_game), join_game, textField, userScore);
                         count--;
                         buttonHelp.setText("Get Help x" + count);
                     }
@@ -302,21 +298,41 @@ public class SudokuGUI {
                 buttonHelp.setEnabled(false);
         });
 
-        TimerTask tasknew = new TimerTask() {
-            @Override
-            public void run() {
-                listMessages.removeAll();
-                for (Object message : peer.getMessages()) {
-                    listMessages.add(message.toString());
-                }
-            }
-        };
+        for (int row = 0; row < 9; row++) {
+            for (int column = 0; column < 9; column++) {
+                textField[row][column].addFocusListener(new FocusListener() {
+                    public void focusLost(FocusEvent e) {
+                        //printSudoku(peer.getSudoku(join_game), join_game, textField, userScore);
+                        if (e.getSource() instanceof JTextField) {
+                            //HashMap<String, Integer> userScore=peer.score_peer();
+                            focusedTextBox = (JTextField) e.getSource();
+                        }
+                    }
 
-        java.util.Timer timer = new java.util.Timer();
-        timer.schedule(tasknew, 3000, 3000);
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        listScroller = new JScrollPane(listMessages);
+                    public void focusGained(FocusEvent e) {
+                        //HashMap<String, Integer> userScore=peer.score_peer();
+                        printSudoku(peer.getSudoku(join_game), join_game, textField, userScore);
+                    }
+                });
+                int finalRow = row;
+                int finalColumn = column;
+                textField[row][column].addActionListener(actionEvent -> {
+                    value = peer.placeNumber(join_game, finalRow, finalColumn, Integer.parseInt(((JTextField) actionEvent.getSource()).getText()));
+                    if (value == -1) {
+                        JOptionPane.showMessageDialog(frame, "Number not valid for cell");
+                    } else if (value == 1) {
+                        JOptionPane.showMessageDialog(frame, "Number valid for cell");
+                        printSudoku(peer.getSudoku(join_game), join_game, textField, userScore);
+                    } else if (value == 2) {
+                        printSudoku(peer.getSudoku(join_game), join_game, textField, userScore);
+                        peer.leaveNetwork(user.getNickname(), join_game, join);
+                        System.exit(0);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Number already in cell");
+                    }
+                });
+            }
+        }
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -365,17 +381,41 @@ public class SudokuGUI {
         }
     }
 
-    public void printSudoku(Integer[][] sudoku, String join_game, JTextField textField[][]) {
+    public void printSudoku(Integer[][] sudoku, String join_game, JTextField textField[][], HashMap<String, Integer> userScore) {
+        int count=0;
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 textField[row][column].setEnabled(true);
                 textField[row][column].setText("" + (sudoku[row][column] != 0 ? sudoku[row][column] : ""));
+                if(sudoku[row][column]==0) count++;
                 textField[row][column].setBackground(sudoku[row][column] != 0 ? Color.LIGHT_GRAY : Color.WHITE);
                 textField[row][column].setEditable(sudoku[row][column] != 0 ? false : true);
                 textField[row][column].setFocusable(sudoku[row][column] != 0 ? false : true);
                 textField[row][column].setForeground(Color.BLACK);
             }
         }
+        if(count==0) {
+            JOptionPane.showConfirmDialog(null, getVictory(userScore), "End Game", JOptionPane.DEFAULT_OPTION);
+            peer.leaveNetwork(user.getNickname(), join_game, join);
+            System.exit(0);
+
+        }
         listScroller.scrollRectToVisible(new Rectangle(0, listScroller.getHeight() - 2, 1, 1));
+    }
+    public String getVictory(HashMap<String, Integer> userScore){
+        int max_score= user.getScore();
+        String winner = user.getNickname();
+        for(String str : userScore.keySet()){
+            if(userScore.get(str) > max_score && !str.equals(winner)){
+                max_score= userScore.get(str);
+                winner= str;
+            }
+            if(userScore.get(str)==max_score && !str.equals(winner)){
+                max_score= userScore.get(str);
+                winner+=" "+(str);
+            }
+        }
+        String message= "The user/s "+winner+" won the sudoku game with score of "+max_score;
+        return message;
     }
 }

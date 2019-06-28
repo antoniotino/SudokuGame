@@ -4,8 +4,10 @@ import Sudoku.SudokuGameImpl;
 
 import User.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class TerminalGrafic {
@@ -16,6 +18,7 @@ public class TerminalGrafic {
     private String join_game;
     private boolean join;
     private int count_help = 3;
+    private HashMap<String, Integer> userScore= new HashMap<String,Integer>();
 
     public TerminalGrafic(SudokuGameImpl peer, int peerID, User user) {
         this.peer = peer;
@@ -27,15 +30,31 @@ public class TerminalGrafic {
         while (true) {
             infoUser(user, peerID);
             printMenu();
-            HashMap<String, Integer> userScore= peer.score_peer();
+            TimerTask scoreTask = new TimerTask() {
+                @Override
+                public void run() {
+                    userScore=peer.score_peer();
+                }
+            };
+            java.util.Timer timerScore = new java.util.Timer();
+            timerScore.schedule(scoreTask, 500, 500);
             Scanner scanner= new Scanner(System.in);
             System.out.println("\nOption");
             int option = scanner.nextInt();
             if(option >0 && option <8){
                 switch (option) {
                     case 1:
-                        System.out.println("Insert the name's game: ");
-                        String _game_name = scanner.next();
+                        HashMap<String, String> roomExisting = peer.active_room();
+                        ArrayList<String> roomName= new ArrayList<String>();
+                        String _game_name="";
+                        for(String str: roomExisting.keySet()) {
+                            roomName.add(str);
+                        }
+                        do {
+                            System.out.println("Insert the name's game: ");
+                            _game_name= scanner.next();
+                        }while(roomName.contains(_game_name));
+
                         System.out.println("Choose the sudoku's difficulty\n1) Easy \t 2) Medium \t 3)Hard \t: ");
                         int choose = scanner.nextInt();
                         String difficulty = "";
@@ -264,15 +283,19 @@ public class TerminalGrafic {
     }
 
     public String getVictory(HashMap<String, Integer> userScore){
-        int max_score=0;
-        String winner ="";
+        int max_score= user.getScore();
+        String winner = user.getNickname();
         for(String str : userScore.keySet()){
-            if(userScore.get(str)> max_score){
+            if(userScore.get(str) > max_score && !str.equals(winner)){
                 max_score= userScore.get(str);
                 winner= str;
             }
+            if(userScore.get(str)==max_score && !str.equals(winner)){
+                max_score= userScore.get(str);
+                winner+=" "+(str);
+            }
         }
-        String message= "The user "+winner+" won the sudoku game with score of "+max_score;
+        String message= "The user/s "+winner+" won the sudoku game with score of "+max_score;
         return message;
     }
 }

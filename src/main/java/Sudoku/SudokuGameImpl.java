@@ -185,8 +185,6 @@ public class SudokuGameImpl implements SudokuGame {
                             String message = u.getNickname() + " add number " + _number + " in game: " + _game_name;
                             sendMessage(message, sudokuChallenge);
                         }
-
-
                     //Checks if the game is finished
                     if (sudokuChallenge.end_game()) {
                         return 2;
@@ -194,19 +192,20 @@ public class SudokuGameImpl implements SudokuGame {
                     else {
                         return 1;
                     }
-
                 } else if (sudokuChallenge.number_already_insert(_number, _i, _j)) { //Checks if the number has already been entered
                     //Add +0 to user
                     return 0;
                 } else { //the number is wrong
                     //Remove -1 to user
-                    User u = null;
                     for (PeerAddress peerAddress : usersInGame.keySet())
                         if (peerAddress.equals(peer.peerAddress())) {
-                            u = usersInGame.get(peerAddress);
+                            User u = usersInGame.get(peerAddress);
                             u.decreaseScore(1);
                             usersInGame.put(peerAddress, u);
                             sudokuChallenge.getPeerScore().put(u.getNickname(), u.getScore());
+                            userScore.put(u.getNickname(), u.getScore());
+                            //update score in DHT
+                            _dht.put(Number160.createHash("userScore")).data(new Data(userScore)).start().awaitUninterruptibly();
                         }
                     return -1;
                 }
@@ -231,48 +230,6 @@ public class SudokuGameImpl implements SudokuGame {
                 FutureDirect futureDirect = _dht.peer().sendDirect(peerAddress).object(message).start();
                 futureDirect.awaitUninterruptibly();
             }
-        }
-    }
-
-    /**
-     * Method that elects the winner / winners of the game
-     */
-    private void victoryMsg(SudokuChallenge sudokuChallenge) {
-        int max_score = 0;
-        int count_score = 0;
-        String win = "";
-
-        //Found max score
-        for (String nickname : sudokuChallenge.getPeerScore().keySet()) {
-            int score_u = sudokuChallenge.getPeerScore().get(nickname);
-            if (score_u > max_score)
-                max_score = score_u;
-        }
-
-        //Count the number of users with the max score
-        for (String nickname : sudokuChallenge.getPeerScore().keySet()) {
-            int score_u = sudokuChallenge.getPeerScore().get(nickname);
-            if (score_u == max_score)
-                count_score++;
-        }
-
-        //send msg
-        if (count_score == 1) {
-            for (String nickname : sudokuChallenge.getPeerScore().keySet()) {
-                int score_u = sudokuChallenge.getPeerScore().get(nickname);
-                if (score_u == max_score)
-                    win += "The user " + nickname + " with the score " + max_score + " won";
-            }
-            sendMessage(win, sudokuChallenge);
-        } else {
-            win += "The users ";
-            for (String nickname : sudokuChallenge.getPeerScore().keySet()) {
-                int score_u = sudokuChallenge.getPeerScore().get(nickname);
-                if (score_u == max_score)
-                    win += nickname + ",";
-            }
-            win += " with the score " + max_score + " won";
-            sendMessage(win, sudokuChallenge);
         }
     }
 
@@ -344,7 +301,7 @@ public class SudokuGameImpl implements SudokuGame {
         try {
             FutureGet room = _dht.get(Number160.createHash("room_active")).start();
             room.awaitUninterruptibly();
-
+            if(room.isEmpty()) return new HashMap<>();
             if (room.isSuccess()) {
                 HashMap<String, String> r;
                 r = (HashMap<String, String>) room.dataMap().values().iterator().next().object();
@@ -355,7 +312,7 @@ public class SudokuGameImpl implements SudokuGame {
             e.printStackTrace();
         }
 
-        return null;
+        return new HashMap<>();
     }
 
     /**
