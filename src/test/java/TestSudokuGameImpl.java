@@ -3,8 +3,10 @@ import Sudoku.SudokuGameImpl;
 import User.User;
 
 import junit.framework.TestCase;
+import net.tomp2p.peers.PeerAddress;
 import org.junit.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestSudokuGameImpl extends TestCase {
@@ -70,6 +72,42 @@ public class TestSudokuGameImpl extends TestCase {
         peer2.choose_difficulty("easy");
         Integer[][] sudokuEasy2 = peer2.generateNewSudoku("SudokuEasy");
         assertFalse(sudokuEasy2.length == 0);
+    }
+
+    /**
+     * Test for method duplicateNickname
+     */
+    @Test
+    public void test_duplicateNickname1() throws Exception{
+        start_system();
+
+        User user1 = new User("Tino");
+        HashMap<PeerAddress, User> nickname= peer0.duplicateNickname();
+        ArrayList<String> nicknameUser= new ArrayList<String>();
+
+        for(PeerAddress str: nickname.keySet())
+            nicknameUser.add(nickname.get(str).getNickname());
+
+
+        assertFalse(nicknameUser.contains(user1.getNickname()));
+    }
+
+    @Test
+    public void test_duplicateNickname2() throws Exception{
+        start_system();
+
+        User user1 = new User("Tino");
+        peer0.addUser(user1);
+
+
+        User user2 = new User("Tino");
+        HashMap<PeerAddress, User> nickname= peer1.duplicateNickname();
+        ArrayList<String> nicknameUser= new ArrayList<String>();
+
+        for(PeerAddress str: nickname.keySet())
+            nicknameUser.add(nickname.get(str).getNickname());
+
+        assertTrue(nicknameUser.contains(user2.getNickname()));
     }
 
     /**
@@ -215,9 +253,13 @@ public class TestSudokuGameImpl extends TestCase {
         peer2.join("SudokuEasy", "Alberto");
         peer3.join("SudokuEasy", "Gennaro");
 
-        assertTrue(peer1.leaveNetwork("Jack", "SudokuEasy", true));
-        assertTrue(peer2.leaveNetwork("Alberto", "SudokuEasy", true));
-        assertTrue(peer3.leaveNetwork("Gennaro", "SudokuEasy", true));
+        int leave1 = peer1.leaveNetwork("Jack", "SudokuEasy", true);
+        int leave2 = peer2.leaveNetwork("Alberto", "SudokuEasy", true);
+        int leave3 = peer3.leaveNetwork("Gennaro", "SudokuEasy", true);
+
+        assertTrue(leave1 == 1);
+        assertTrue(leave2 == 1);
+        assertTrue(leave3 == 1);
     }
 
     /**
@@ -231,7 +273,9 @@ public class TestSudokuGameImpl extends TestCase {
         peer1.generateNewSudoku("SudokuEasy");
         peer1.join("SudokuEasy", "Jack");
 
-        assertTrue(peer1.getHelp("SudokuEasy", 1, 7));
+        int help = peer1.getHelp("SudokuEasy", 1, 7);
+
+        assertTrue(help == 1);
     }
 
     //Help is impossible: empty is busy (row 0, column 0)
@@ -242,6 +286,8 @@ public class TestSudokuGameImpl extends TestCase {
         peer1.generateNewSudoku("SudokuEasy");
         peer1.join("SudokuEasy", "Jack");
 
-        assertFalse(peer1.getHelp("SudokuEasy", 0, 0));
+        int help = peer1.getHelp("SudokuEasy", 0, 0);
+
+        assertTrue(help == 0);
     }
 }
