@@ -22,12 +22,12 @@ public class StartGame {
         System.out.printf("\t *\tCreated by Jack&Tino \t\t *\n");
         System.out.printf("\t * * * * * * * * * * * * * * * * * * * * *\n\n");
 
-        System.out.printf("Choose the graphic quality:\t1) Terminal \t 2) GUI : ");
-        int choose = scanner.nextInt();
-        while(choose <1 || choose>2){
+        int choose;
+        do{
             System.out.printf("Choose the graphic quality:\t1) Terminal \t 2) GUI : ");
             choose = scanner.nextInt();
-        }
+        }while(choose <1 || choose>2);
+
         if (choose == 1) {
             SudokuGameImpl peer = new SudokuGameImpl(peerID, "127.0.0.1", new MessageListenerTerminal(peerID));
             HashMap<PeerAddress, User> nicknameHash= peer.duplicateNickname();

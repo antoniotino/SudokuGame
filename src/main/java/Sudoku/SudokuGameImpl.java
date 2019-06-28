@@ -238,6 +238,7 @@ public class SudokuGameImpl implements SudokuGame {
      */
     public void addUser(User user) throws IOException {
         usersInGame.put(peer.peerAddress(), user);
+
         //update in dht
         _dht.put(Number160.createHash("usersInGame")).data(new Data(usersInGame)).start().awaitUninterruptibly();
     }
@@ -303,6 +304,9 @@ public class SudokuGameImpl implements SudokuGame {
             room.awaitUninterruptibly();
             if(room.isEmpty()) return new HashMap<>();
             if (room.isSuccess()) {
+                if(room.isEmpty())
+                    return new HashMap<>();
+
                 HashMap<String, String> r;
                 r = (HashMap<String, String>) room.dataMap().values().iterator().next().object();
 
@@ -337,9 +341,8 @@ public class SudokuGameImpl implements SudokuGame {
     }
 
     /**
-     * Allows to view the nickname of users
+     * Allows to check if the nickname is already used
      */
-
     public HashMap<PeerAddress, User> duplicateNickname() {
 
         try {
@@ -386,7 +389,6 @@ public class SudokuGameImpl implements SudokuGame {
                     }
 
                 return placeNumber(_game_name, row, column, help);
-                //return true;
             }
         } catch (Exception e) {
             e.printStackTrace();

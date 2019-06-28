@@ -36,17 +36,17 @@ public class TestGame {
 
         //Sudoku generation with difficulty easy: correct
         Integer[][] sudoku_easy = peer1.generateNewSudoku("SudokuEasy");
-        if (sudoku_easy.length != 0)
+        if (sudoku_easy.length > 0)
             logg.info("Sudoku created correctly!");
 
         //Sudoku generation with easy difficulty: wrong because there is already a sudoku with that name and that difficulty
-        Integer[][] sudoku_duplicate = peer2.generateNewSudoku("SudokuEasy");
+        Integer[][] sudoku_duplicate = peer1.generateNewSudoku("SudokuEasy");
         if (sudoku_duplicate.length == 0)
             logg.info("There is already a sudoku with this name!");
 
         //Sudoku generation with difficulty hard: correct
         Integer[][] sudoku_hard = peer3.generateNewSudoku("SudokuHard");
-        if (sudoku_hard.length != 0)
+        if (sudoku_hard.length > 0)
             logg.info("Sudoku created correctly!");
 
         //Show active sudokus
@@ -79,11 +79,11 @@ public class TestGame {
             logg.info("Error in print to sudoku!");
 
         //Help is possible: empty cell (row 1, column 8)
-        if(peer0.getHelp("SudokuEasy", 1, 8))
+        if(peer0.getHelp("SudokuEasy", 1, 8) == 1)
             logg.info("getHelp correct");
 
         //Help is impossible: empty is busy (row 2, column 0)
-        if(!peer2.getHelp("SudokuHard", 2, 0))
+        if(peer2.getHelp("SudokuHard", 2, 0) == 0)
             logg.info("getHelp incorrect");
 
         //place number correct in cell row = 1 and column = 8
@@ -108,16 +108,16 @@ public class TestGame {
             logg.info("Valid and correct value but already insert!");
 
         //leave network
-        if (!peer0.leaveNetwork("Antonio", "SudokuEasy", true))
+        if (peer0.leaveNetwork("Antonio", "SudokuEasy", true) != 1)
             logg.info("Error in leaving the network!");
 
-        if (!peer1.leaveNetwork("Jack", "SudokuEasy", false))
+        if (peer1.leaveNetwork("Jack", "SudokuEasy", false) != 1)
             logg.info("Error in leaving the network!");
 
-        if(!peer2.leaveNetwork("Alberto", "SudokuHard", true))
+        if(peer2.leaveNetwork("Alberto", "SudokuHard", true) != 1)
             logg.info("Error in leaving the network!");
 
-        if(!peer3.leaveNetwork("Gennaro", "SudokuHard", false))
+        if(peer3.leaveNetwork("Gennaro", "SudokuHard", false) != 1)
             logg.info("Error in leaving the network!");
 
         System.exit(0);

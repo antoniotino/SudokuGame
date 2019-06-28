@@ -24,7 +24,6 @@ public class SudokuChallenge implements Serializable {
      */
     private HashMap<String, Integer> peerScore = new HashMap<String, Integer>();
 
-
     public SudokuChallenge(String _game_name, String difficulty) throws IOException, ParseException {
         this._game_name = _game_name;
         sudoku = new Sudoku(_game_name);

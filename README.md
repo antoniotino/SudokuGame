@@ -25,32 +25,55 @@ University of Salerno
 
 ## Problem Statement
 Design and development of the Sudoku Game on a P2P network. <br>
-Each user can place a number of the sudoku game, if it is not already placed takes 1 point, if it is already placed and it is rights takes 0 point, in other case receive -1 point. The games is based on 9 x 9 matrix. All users that play to a game are automatically informed when a user increment its score, and when the game is finished. The system allows the users to generate (automatically) a new Sudoku challange identified by a name, join in a challenge using a nickname, get the integer matrix describing the Sudoku challenge, and place a solution number
+Each user can place a number of the sudoku game, if it is not already placed takes 1 point, if it is already placed and it is rights takes 0 point, in other case receive -1 point. The game is based on a 9 x 9 matrix. All users that are playing a match are automatically informed when a user increment its score, and when the match is over. The system allows the users to generate (automatically) a new Sudoku challenge identified by a name, join in a challenge using a nickname, get the integer matrix describing the Sudoku challenge, and place a solution number.
 
+## Solution 
+The solution for the Sudoku Game on a P2P network provides two different interfaces
+(Terminal or GUI) & has two Sudoku Tables for each level of difficulty (easy, medium and hard).
+The complete and incomplete Sudoku Tables are saved in two different JSONs. <br>
+Once the user joins the system, he'll have to chose with which graphic interface he wants to play,
+ and a unique nickname (that's not already taken by another user). After all of this, he'll find a
+menu with the following options:  
+* "Create a new Sudoku" which will ask to set a name and a difficulty.
+The generated Sudoku must have a different combination of name and difficulty from every other
+already generated Sudoku & will be put in a matrix (Integer [ ][ ]).
+* "Show active Sudoku" that will show every created Sudoku that's still active.
+* "Join in a game" allows the user to type the name of the Sudoku Match he wants to join.
+* "Get Sudoku" will show the Sudoku Table of the match he chose. This operation can be done
+at anytime.
+* "Place number" is where the user will specify the number he wants to put in and where he wants it
+to be placed (row and column). If the number is in the correct position the user will earn one point; if the number
+is not in the correct position he will lose one point; if the number is placed correctly but
+has already been placed by another user he will neither earn or lose points.
+* "Get help" will put the correct number in a given position (row and column). This operation
+can be done just three times per Match.
+* "Exit" allows the user to leave the Match and the system.
+
+Once the game's over, a message that announces the winner, or the winners (in case of draw),
+ will be shown.
+ 
 ## Default Features
 * Integer[][] generateNewSudoku(String _game_name)
-    * This method allows to generate a new sudoku game
+    * This method allows to generate a new sudoku match
 * boolean join(String _game_name, String _nickname)
-    * This method allows a user to join in a game
+    * This method allows a user to join in a match
 * Integer[][] getSudoku(String _game_name)
-    * This method allows to get the sudoku game with only the number placed by the user
+    * This method allows to get the sudoku match with only the number placed by the user
 * Integer placeNumber(String _game_name, int _i, int _j, int _number);
-    * This method allows to place a new solution number in the game
+    * This method allows to place a new solution number in the match
 ## New Features
-* boolean leaveNetwork(String _nickname, String _game_name)
+* Integer leaveNetwork(String _nickname, String _game_name)
     * This method allows a peer to leave the network
 * choose_difficulty(String difficulty)
-    * This method allows you to set the difficulty of sudoku
+    * This method allows you to set the difficulty of the sudoku
 * HashMap<String, String> active_room()
     * This method allows to view the active rooms (matches in progress) 
-* boolean getHelp(String _game_name, int row, int column)
+*Integer getHelp(String _game_name, int row, int column)
     * This method allows you to help the user (max 3)     
     
 ## Other Methods    
 * public void addUser(User user)
     * This method allows adding the user to the system (Sudoku game)
-* private void victoryMsg(SudokuChallenge sudokuChallenge)
-    * This method calculates the winner / winners and generates a message to alert others  
 * private void sendMessage(String message, SudokuChallenge sudokuChallenge)
     * This method allows you to send a message to other peers
     
@@ -61,33 +84,69 @@ Each user can place a number of the sudoku game, if it is not already placed tak
 * GUI <br>
 ![Img](https://github.com/antoniotino/SudokuGame/blob/master/img/GUI.png)
    
-## Solution 
-Project under construction
-
 ## Test
 #### JUnit Test
 Framework used: JUnit 4 <br>
 Class: TestSudokuGameImpl.java <br>
 Path: \src\test\java <br> <br>
-The methods tested are all those of the SudokuGameImpl class which allows you to join the system and play with other users.They are:
-* generateNewSudoku
-* join
-* getSudoku
-* placeNumber
-* addUser
-* leaveNetwork
-* choose_difficulty
-* active_room
-* getHelp
+The tested methods are those of the SudokuGameImpl class which allows you to join the system and play with other users.They are:
+<br> <br> **generateNewSudoku** <br>
+There is only one test for this method:
+1. *test_generateNewSudoku()* which generates two sudokus with the same name and this operation is not possible.
+
+
+**duplicateNickname** <br>
+For this method there are two tests:
+1. *test_duplicateNickname1()* only one user is entered: there isn't a nickname in the system.
+2. *test_duplicateNickname2()* two users are inserted: the second user would like to use the same nickname as the first and this operation is not possible.
+
+**join** <br>
+For this method there are two tests:
+1. *test_join1()* a user joins an existing sudoku.
+2. *test_join2()* a user tries to join a sudoku that does not exist.
+
+**getSudoku** <br>
+For this method there are two tests:
+1. *test_getSudoku1()* tests the print of an existing sudoku.
+2. *test_getSudoku2()* tests the print of a non-existent sudoku.
+
+**placeNumber** <br>
+For this method there are three tests:
+1. *test_placeNumber1()* puts a correct number.
+2. *test_placeNumber2()* puts an incorrect number.
+3. *test_placeNumber3()* puts a correct number but cell is already busy.
+
+**addUser** <br>
+There is only one test for this method:
+1. *test_addUser()* users are added to the system
+
+**leaveNetwork** <br>
+There is only one test for this method:
+1. *test_leaveNetwork()* users leave the system.
+
+**choose_difficulty** <br>
+There is only one test for this method:
+1. *test_choose_difficulty()* the difficulties of three sudokus are set
+
+**active_room** <br>
+For this method there are two tests:
+1. *test_activeRoom1()* shows active sudokus.
+2. *test_activeRoom2()* there are not active sudoku (in the game would be shown the message "There are no active rooms").
+
+**getHelp** <br>
+For this method there are two tests:
+1. *test_getHelp1()* help is required for an empty cell.
+2. *test_getHelp2()* help is required for an already busy cell.
 
 Number of peers: 4 <br>
-Tests passed: 15 of 15 test
+Tests passed: 17 of 17 test
  
 #### Test  without JUnit 
 Class: TestGame.java <br>
 Path: \src\test\java <br>
-The methods tested are all those of the SudokuGameImpl class which allows you to join the system and play with other users.They are:
+The methods tested are those of the SudokuGameImpl class which allows you to join the system and play with other users.They are:
 * generateNewSudoku
+* duplicateNickname
 * join
 * getSudoku
 * placeNumber
@@ -103,10 +162,12 @@ Number of peers: 4
 * You could use:
     * Eclipse, Intellij or any other IDE you like
         * Steps:
-            * ...
+            * Run - Edit Configurations - set "Program arguments" 0 (Master)
+            * Run - Edit Configurations - set "Program arguments" 1 (First Peer)
     * Terminal (PowerShell/CMD on Windows or BASH on Linux-based system)
         * Commands:
-            * ...
+            * java -jar SudokuGame.jar 0 (Master)
+            * java -jar SudokuGame.jar 1 (First Peer)
 * Other information will be added soon...
 
 ## Build in a Docker container
