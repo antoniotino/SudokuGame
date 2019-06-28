@@ -168,7 +168,6 @@ Number of peers: 4
         * Commands:
             * java -jar SudokuGame.jar 0 (Master)
             * java -jar SudokuGame.jar 1 (First Peer)
-* Other information will be added soon...
 
 ## Build in a Docker container
 Project under construction
