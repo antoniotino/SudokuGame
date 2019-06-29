@@ -19,4 +19,4 @@ COPY /unsolvedSudoku.json /app
 WORKDIR /app
 COPY /solvedSudoku.json /app
 
-CMD /usr/local/openjdk-11 -jar sudokugame-1.0-jar-with-dependencies.jar -m $MASTERIP -id $ID
+CMD /usr/bin/java -jar sudokugame-1.0-jar-with-dependencies.jar -m $MASTERIP -id $ID
