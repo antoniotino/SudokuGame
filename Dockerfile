@@ -7,7 +7,7 @@ WORKDIR /app
 COPY --from=0 /app/SudokuGame /app
 RUN mvn package
 
-FROM openjdk:13-alpine
+FROM openjdk:8-jre-alpine
 WORKDIR /app
 ENV MASTERIP=127.0.0.1
 ENV ID=0
