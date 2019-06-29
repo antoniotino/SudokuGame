@@ -14,9 +14,9 @@ ENV ID=0
 COPY --from=1 /app/target/sudokugame-1.0-jar-with-dependencies.jar /app
 
 WORKDIR /app
-COPY /app/SudokuGame/unsolvedSudoku.json /app
+COPY /unsolvedSudoku.json /app
 
 WORKDIR /app
-COPY /app/SudokuGame/solvedSudoku.json /app
+COPY /solvedSudoku.json /app
 
 CMD /usr/bin/java -jar sudokugame-1.0-jar-with-dependencies.jar -m $MASTERIP -id $ID
