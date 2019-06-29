@@ -1,7 +1,6 @@
 import GraphicUserInterface.MessageListenerGUI;
 import Sudoku.SudokuGameImpl;
 import User.User;
-
 import junit.framework.TestCase;
 import net.tomp2p.peers.PeerAddress;
 import org.junit.*;
@@ -97,18 +96,17 @@ public class TestSudokuGameImpl extends TestCase {
         start_system();
 
         User user1 = new User("Tino");
-        peer0.addUser(user1);
+        User user2 = new User("Tino"); //user 2: duplicate
+        peer0.addUser(user1); //add user 1 in the system
 
-
-        User user2 = new User("Tino");
-        HashMap<PeerAddress, User> nickname= peer1.duplicateNickname();
+        HashMap<PeerAddress, User> nickname= peer0.duplicateNickname();
         ArrayList<String> nicknameUser= new ArrayList<String>();
 
         for(PeerAddress str: nickname.keySet())
             nicknameUser.add(nickname.get(str).getNickname());
 
-        assertTrue(nicknameUser.contains(user2.getNickname()));
-    }
+        assertTrue(nicknameUser.contains(user2.getNickname())); //check if user 2 is a duplicate
+        }
 
     /**
      * Test for method active_room
