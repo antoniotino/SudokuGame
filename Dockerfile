@@ -2,9 +2,9 @@ FROM alpine/git
 WORKDIR /app
 RUN git clone https://github.com/antoniotino/SudokuGame.git
 
-FROM maven:3.6-jdk-11
+FROM maven:3.5-jdk-8-alpine
 WORKDIR /app
-COPY --from=0 /app/SudokuGame /app
+COPY --from=0 /app/sudokugame /app
 RUN mvn package
 
 FROM openjdk:8-jre-alpine
