@@ -7,10 +7,11 @@ WORKDIR /app
 COPY --from=0 /app/SudokuGame /app
 RUN mvn package
 
-FROM openjdk:13-ea-19-jdk-alpine3.9
+FROM openjdk:11.0.3-stretch
 WORKDIR /app
 ENV MASTERIP=127.0.0.1
 ENV ID=0
 COPY --from=1 /app/target/sudokugame-1.0-jar-with-dependencies.jar /app
+COPY package *.json /app
 
-CMD /usr/bin/java -jar sudokugame-1.0-jar-with-dependencies.jar -m $MASTERIP -id $ID
+CMD ["jshell"] -jar sudokugame-1.0-jar-with-dependencies.jar -m $MASTERIP -id $ID
