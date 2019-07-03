@@ -28,6 +28,7 @@ public class StartGame {
         StartGame startgame = new StartGame();
         final CmdLineParser parser = new CmdLineParser(startgame);
         try {
+            parser.parseArgument(args);
             Scanner scanner = new Scanner(System.in);
             String nickname = "";
             System.out.printf("\n\n \t * * * * * * * * * * * * * * * * * * * * *\n");
