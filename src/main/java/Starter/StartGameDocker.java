@@ -25,6 +25,7 @@ public class StartGameDocker {
         StartGameDocker startgame = new StartGameDocker();
         final CmdLineParser parser = new CmdLineParser(startgame);
         try {
+            parser.parseArgument(args);
             Scanner scanner = new Scanner(System.in);
             String nickname = "";
             System.out.printf("\n\n \t * * * * * * * * * * * * * * * * * * * * *\n");
