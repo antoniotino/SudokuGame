@@ -194,3 +194,7 @@ When master is started you have to check the ip address of your container:
 Now you can start your peers varying the unique peer id:
 
 ```docker run -i --name PEER-1 -e MASTERIP="172.17.0.2" -e ID=1 sudokugame```
+
+#### Restriction
+
+When you started SudokuGame with docker, you can play only in terminal version, because in docker you can't run a Gui application.
