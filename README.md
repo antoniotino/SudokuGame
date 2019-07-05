@@ -182,7 +182,7 @@ After that you can start the master peer, in interactive mode (-i) and with two 
 
 ```docker run -i --name MASTER-PEER -e MASTERIP="127.0.0.1" -e ID=0 sudokugame```
 
-,the MASTERIP envirnoment variable is the master peer ip address and the ID environment variable is the unique id of your peer. Rember you have to run the master peer using the ID=0.
+the MASTERIP envirnoment variable is the master peer ip address and the ID environment variable is the unique id of your peer. Rember you have to run the master peer using the ID=0.
 
 #### Start a generic peer
 
@@ -197,4 +197,4 @@ Now you can start your peers varying the unique peer id:
 
 #### Restriction
 
-When you started SudokuGame with docker, you can play only in terminal version, because in docker you can't run a Gui application.
+If you run the SudokuGame with docker, you can only play the terminal version, because docker can't run a Gui.
