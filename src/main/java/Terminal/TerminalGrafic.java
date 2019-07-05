@@ -54,9 +54,15 @@ public class TerminalGrafic {
                             System.out.println("Insert the name's game: ");
                             _game_name= scanner.next();
                         }while(roomName.contains(_game_name));
-
-                        System.out.println("Choose the sudoku's difficulty\n1) Easy \t 2) Medium \t 3)Hard \t: ");
-                        int choose = scanner.nextInt();
+                        int choose;
+                        do{
+                            System.out.println("Choose the sudoku's difficulty\n1) Easy \t 2) Medium \t 3)Hard \t: ");
+                            while(!scanner.hasNextInt()){
+                                System.out.println("\n Error into choose!\nChoose the sudoku's difficulty\n1) Easy \t 2) Medium \t 3)Hard \t: ");
+                                scanner.next();
+                            }
+                            choose= scanner.nextInt();
+                        } while(choose < 1 || choose >3);
                         String difficulty = "";
                         switch (choose) {
                             case 1:
@@ -67,11 +73,6 @@ public class TerminalGrafic {
                                 break;
                             case 3:
                                 difficulty += "hard";
-                                break;
-                            default:
-                                System.out.printf("\n Error into choose!\n");
-                                System.out.printf("\nChoose the sudoku's difficulty\n1) Easy \t 2) Medium \t 3)Hard \t: ");
-                                choose = scanner.nextInt();
                                 break;
                         }
                         peer.choose_difficulty(difficulty);
@@ -112,21 +113,34 @@ public class TerminalGrafic {
                         if(join_game == null)
                             System.out.printf("\nYou need to join a game\n");
                         else{
-                            System.out.println("Insert number: ");
-                            int ele = scanner.nextInt();
-                            System.out.println("Row: ");
-                            int row = scanner.nextInt();
-                            while(row < 1 || row >9){
-                                System.out.println("Number row not correct \nRow: ");
-                                row = scanner.nextInt();
-                            }
+                            int ele;
+                            do{
+                                System.out.println("Insert number: ");
+                                while(!scanner.hasNextInt()){
+                                    System.out.println("That's not a number");
+                                    scanner.next();
+                                }
+                                ele= scanner.nextInt();
+                            } while(ele < 0);
+                            int row;
+                            do{
+                                System.out.println("Row: ");
+                                while(!scanner.hasNextInt()){
+                                    System.out.println("Number row not correct \nRow: ");
+                                    scanner.next();
+                                }
+                                row= scanner.nextInt();
+                            } while(row < 1 || row >9);
                             row -= 1;
-                            System.out.println("Column: ");
-                            int column = scanner.nextInt();
-                            while(column < 1 || column >9){
-                                System.out.println("Number column not correct \nColumn: ");
-                                column = scanner.nextInt();
-                            }
+                            int column;
+                            do{
+                                System.out.println("Column: ");
+                                while(!scanner.hasNextInt()){
+                                    System.out.println("Number column not correct \nColumn: ");
+                                    scanner.next();
+                                }
+                                column= scanner.nextInt();
+                            } while(column < 1 || column >9);
                             column -=1;
                             int result = peer.placeNumber(join_game, row, column, ele);
                             if(result == 1)
@@ -150,19 +164,25 @@ public class TerminalGrafic {
                             if(count_help == 0)
                                 System.out.printf("\n\nThe number of suggestions is over \n\n");
                             else{
-                                System.out.println("Row: ");
-                                int row = scanner.nextInt();
-                                while(row < 1 || row >9){
-                                    System.out.println("Number row not correct \nRow: ");
-                                    row = scanner.nextInt();
-                                }
+                                int row;
+                                do{
+                                    System.out.println("Row: ");
+                                    while(!scanner.hasNextInt()){
+                                        System.out.println("Number row not correct \nRow: ");
+                                        scanner.next();
+                                    }
+                                    row= scanner.nextInt();
+                                } while(row < 1 || row >9);
                                 row -= 1;
-                                System.out.println("Column: ");
-                                int column = scanner.nextInt();
-                                while(column < 1 || column >9){
-                                    System.out.println("Number row not column \nColumn: ");
-                                    column = scanner.nextInt();
-                                }
+                                int column;
+                                do{
+                                    System.out.println("Column: ");
+                                    while(!scanner.hasNextInt()){
+                                        System.out.println("Number column not correct \nColumn: ");
+                                        scanner.next();
+                                    }
+                                    column= scanner.nextInt();
+                                } while(column < 1 || column >9);
                                 column -=1;
                                 if(peer.getHelp(join_game, row, column)==1){
                                     System.out.printf("\n\nok! \n\n");
@@ -181,8 +201,15 @@ public class TerminalGrafic {
                         }
                         break;
                     case 7:
+                        int exit;
+                        do{
                         System.out.println("\nAre you sure to leave the network?\n 1) Yes \t2) No");
-                        int exit = scanner.nextInt();
+                        while(!scanner.hasNextInt()){
+                            System.out.println("Choose not correct \nAre you sure to leave the network?\n 1) Yes \t2) No");
+                            scanner.next();
+                        }
+                            exit= scanner.nextInt();
+                    } while(exit < 1 || exit >2);
                         if (exit==1) {
                             if(peer.leaveNetwork(user.getNickname(), join_game, join)==1)
                                 System.exit(0);
