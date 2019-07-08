@@ -39,9 +39,12 @@ public class StartGame {
             int choose;
             do {
                 System.out.printf("Choose the graphic quality:\t1) Terminal \t 2) GUI : ");
-                choose = scanner.nextInt();
-            } while (choose < 1 || choose > 2);
-
+                while(!scanner.hasNextInt()){
+                    System.out.printf("\n Error into choose!\nChoose the graphic quality:\t1) Terminal \t 2) GUI : ");
+                    scanner.next();
+                }
+                choose= scanner.nextInt();
+            } while(choose < 1 || choose >2);
             if (choose == 1) {
                 SudokuGameImpl peer = new SudokuGameImpl(peerID, master, new MessageListenerTerminal(peerID));
                 HashMap<PeerAddress, User> nicknameHash = peer.duplicateNickname();

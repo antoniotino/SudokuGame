@@ -39,8 +39,15 @@ public class TerminalGrafic {
             java.util.Timer timerScore = new java.util.Timer();
             timerScore.schedule(scoreTask, 500, 500);
             Scanner scanner= new Scanner(System.in);
-            System.out.println("\nOption");
-            int option = scanner.nextInt();
+            int option;
+            do{
+                System.out.println("\nOption");
+                while(!scanner.hasNextInt()){
+                    System.out.println("\n Error into choose!\nOption: ");
+                    scanner.next();
+                }
+                option= scanner.nextInt();
+            } while(option < 1 || option >7);
             if(option >0 && option <8){
                 switch (option) {
                     case 1:
@@ -95,14 +102,20 @@ public class TerminalGrafic {
                         System.out.printf("\n");
                         break;
                     case 3:
-                        System.out.println("Name's game: ");
-                        join_game = scanner.next();
-                        join = peer.join(join_game, user.getNickname());
-                        if(join)
-                            System.out.printf("\nSuccessfully join \n");
-                        else
-                            System.out.printf("\nError in join to game \n");
-                        break;
+                        if(join_game==null) {
+                            System.out.println("Name's game: ");
+                            join_game = scanner.next();
+                            join = peer.join(join_game, user.getNickname());
+                            if (join)
+                                System.out.printf("\nSuccessfully join \n");
+                            else
+                                System.out.printf("\nError in join to game \n");
+                            break;
+                        }
+                        else{
+                            System.out.println("You are already in game");
+                            break;
+                        }
                     case 4:
                         if(join_game == null || !join)
                             System.out.printf("\nYou need to join a game\n");
